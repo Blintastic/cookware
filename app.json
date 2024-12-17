@@ -10,13 +10,15 @@
     "newArchEnabled": true,
     "ios": {
       "supportsTablet": true,
-      "package": "com.kw.cookware"
+      "package": "com.kw.cookware",
+      "bundleIdentifier": "com.anonymous.cookware"
     },
     "android": {
       "adaptiveIcon": {
         "foregroundImage": "./assets/images/adaptive-icon.png",
         "backgroundColor": "#ffffff"
-      }
+      },
+      "package": "com.anonymous.cookware"
     },
     "web": {
       "bundler": "metro",

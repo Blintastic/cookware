@@ -14,9 +14,9 @@ export default function Index() {
 
   return (
     <TouchableWithoutFeedback onPress={Keyboard.dismiss}>
-      <View className="flex-1 items-center justify-center bg-white px-4">
+      <View className="flex-1 items-center absolute-top bg-white px-4 mt-20">
         {/* Header */}
-        <Text className="text-3xl font-bold text-gray-800 mb-6">Welcome to Cookware</Text>
+        <Text className="text-3xl font-bold text-gray-800 mb-6 mt-10">Welcome to Cookware</Text>
         <Text className="text-lg text-gray-600 mb-8">
           Search for your favorite recipes or explore our features!
         </Text>
@@ -34,12 +34,29 @@ export default function Index() {
           />
         </View>
 
-        {/* Buttons */}
-        <CustomButtons
-          title="Scanning Feature"
-          handlePress={() => router.push("/cameraScreen")}
-        />
+        <View className="w-full max-w-md bg-gray-200 rounded-lg p-4 mb-6">
+          <Text className="text-gray-700 text-base">
+            Das ist ein Platzhalter...
+          </Text>
+        </View>
+
+
+        <View className="flex-1 justify-end items-center p-4 mb-10">
+          <View className="flex-row justify-between items-center space-x-4">
+            <CustomButtons
+              title="Scanning Feature"
+              handlePress={() => router.push("/cameraScreen")}
+            />
+          
+
+            <CustomButtons
+              title="Einkaufsliste"
+              handlePress={() => router.push("/cameraScreen")}
+            />
+          </View>
+        </View>
       </View>
+        
     </TouchableWithoutFeedback>
   );
 }
