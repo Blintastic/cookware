@@ -4,7 +4,6 @@ import { Camera, CameraType, CameraView, useCameraPermissions} from 'expo-camera
 import CustomButtons from '@/components/CustomButtons';
 import { Redirect, router} from "expo-router";
 
-
 const cameraScreen = () => {
   const [permission, requestPermission] = useCameraPermissions();
   const [facing, setFacing] = useState<CameraType>('back');

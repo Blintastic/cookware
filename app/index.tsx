@@ -1,5 +1,5 @@
 import { useState } from "react";
-import { Text, TextInput, View, Keyboard, TouchableWithoutFeedback } from "react-native";
+import { Text, TextInput, View, Keyboard, TouchableWithoutFeedback, ScrollView, TouchableOpacity } from "react-native";
 import { router } from "expo-router";
 import CustomButtons from "@/components/CustomButtons";
 
@@ -14,49 +14,65 @@ export default function Index() {
 
   return (
     <TouchableWithoutFeedback onPress={Keyboard.dismiss}>
-      <View className="flex-1 items-center absolute-top bg-white px-4 mt-20">
-        {/* Header */}
-        <Text className="text-3xl font-bold text-gray-800 mb-6 mt-10">Welcome to Cookware</Text>
-        <Text className="text-lg text-gray-600 mb-8">
-          Search for your favorite recipes or explore our features!
-        </Text>
-
-        {/* Search Bar */}
-        <View className="w-full max-w-md mb-6">
+      <View className="flex-1 bg-white">
+        {/* Fixed Search Bar */}
+        <View className="w-11/12 max-w-md self-center flex-row items-center bg-gray-100 border border-gray-300 rounded-full px-4 py-2 shadow-sm mt-20 mb-4 z-10">
           <TextInput
             value={searchQuery}
             onChangeText={setSearchQuery}
-            placeholder="Search for recipes..."
-            className="w-full bg-gray-100 border border-gray-300 rounded-lg px-4 py-2 text-lg shadow-sm"
+            placeholder="Rezept suchen..."
+            className="flex-1 text-lg"
             placeholderTextColor="gray"
             returnKeyType="search"
             onSubmitEditing={handleSearchSubmit}
           />
+          <TouchableOpacity onPress={handleSearchSubmit}>
+            <Text className="text-gray-600 text-lg">🔍</Text>
+          </TouchableOpacity>
         </View>
 
-        <View className="w-full max-w-md bg-gray-200 rounded-lg p-4 mb-6">
-          <Text className="text-gray-700 text-base">
-            Das ist ein Platzhalter...
-          </Text>
+        {/* Fixed Floating Buttons */}
+        <View className="absolute right-4 top-32 space-y-4 z-10 mt-6">
+          <TouchableOpacity className="w-14 h-14 bg-gray-300 rounded-full justify-center items-center" onPress={() => router.push("/shoppingListScreen")}>
+            <Text className="text-gray-600 text-base">🛒</Text>
+          </TouchableOpacity>
+          <TouchableOpacity className="w-14 h-14 bg-gray-300 rounded-full justify-center items-center">
+            <Text className="text-gray-600 text-base">▶️</Text>
+          </TouchableOpacity>
+          <TouchableOpacity className="w-14 h-14 bg-gray-300 rounded-full justify-center items-center">
+            <Text className="text-gray-600 text-base">🔄</Text>
+          </TouchableOpacity>
+          <TouchableOpacity className="w-14 h-14 bg-gray-300 rounded-full justify-center items-center">
+            <Text className="text-gray-600 text-base">☰</Text>
+          </TouchableOpacity>
         </View>
 
-
-        <View className="flex-1 justify-end items-center p-4 mb-10">
-          <View className="flex-row justify-between items-center space-x-4">
-            <CustomButtons
-              title="Scanning Feature"
-              handlePress={() => router.push("/cameraScreen")}
-            />
-          
-
-            <CustomButtons
-              title="Einkaufsliste"
-              handlePress={() => router.push("/cameraScreen")}
-            />
+        {/* Scrollable Content */}
+        <ScrollView contentContainerStyle={{ flexGrow: 1 }}>
+          <View className="flex-1 items-center px-4 py-6">
+            {/* Recipe of the Day */}
+            <View className="w-11/12 max-w-md bg-gray-200 rounded-lg p-4 mb-6">
+              <Text className="text-xl font-bold mb-2">Rezept des Tages</Text>
+              <View className="w-full h-40 bg-gray-300 rounded-lg mb-4" />
+              <Text className="text-gray-700 text-base mb-4">
+                Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua.
+              </Text>
+              <View className="flex-row justify-between space-x-4">
+                <CustomButtons title="Zutaten anzeigen" handlePress={() => console.log("Show ingredients")} />
+                <CustomButtons title="Jetzt kochen" handlePress={() => console.log("Start cooking")} />
+              </View>
+            </View>
           </View>
-        </View>
+        </ScrollView>
+
+        {/* Fixed Camera Button */}
+        <TouchableOpacity
+          className="absolute bottom-8 self-center bg-gray-300 rounded-full p-10 z-10"
+          onPress={() => router.push("/cameraScreen")}
+        >
+          <Text className="text-gray-600 text-2xl">📷</Text>
+        </TouchableOpacity>
       </View>
-        
     </TouchableWithoutFeedback>
   );
 }
