@@ -1,4 +1,8 @@
+              add(ReactViroPackage(ReactViroPackage.ViroPlatform.AR))
+              add(ReactViroPackage(ReactViroPackage.ViroPlatform.GVR))
+
 package com.anonymous.cookware
+import com.viromedia.bridge.ReactViroPackage
 
 import android.app.Application
 import android.content.res.Configuration

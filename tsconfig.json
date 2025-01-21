@@ -6,12 +6,15 @@
       "@/*": [
         "./*"
       ]
-    }
+    },
+    "typeRoots": ["./node_modules/@types", "./src"], // Add this to include custom type declarations
+    "skipLibCheck": true // Optional: Ignore type checking for libraries
   },
   "include": [
     "**/*.ts",
     "**/*.tsx",
     ".expo/types/**/*.ts",
-    "expo-env.d.ts"
+    "expo-env.d.ts",
+    "src/**/*.d.ts" // Add this to explicitly include your custom declaration files
   ]
 }
