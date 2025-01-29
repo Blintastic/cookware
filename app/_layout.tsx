@@ -13,8 +13,8 @@ const RootLayout = () => {
         <Stack.Screen name="recipes" options={{ headerShown: false }} />
         <Stack.Screen name="shoppingListScreen" options={{ headerShown: false }} />
         <Stack.Screen name="cameraScreen" options={{ headerShown: false }} />
-        <Stack.Screen name="recipeIngredientsScreen" options={{ headerShown: false }} />
-
+        <Stack.Screen name="recipeDetailScreen" options={{ headerShown: false }} />
+        <Stack.Screen name="IngredientsListScreen" options={{ headerShown: false }} />
       </Stack>
     </>
   );
