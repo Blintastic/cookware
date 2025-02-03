@@ -30,9 +30,9 @@ export default function Index() {
           <View className="flex-1 items-center px-4 py-6">
             {/* Recipe of the Day */}
             <View className="w-11/12 max-w-md bg-gray-200 rounded-lg p-4 mb-6">
-              <Text className="text-xl font-bold mb-2">Rezept des Tages</Text>
+              <Text className="text-xl font-bold mb-2 font-loblack">Rezept des Tages</Text>
               <View className="w-full h-40 bg-gray-300 rounded-lg mb-4" />
-              <Text className="text-gray-700 text-base mb-4">
+              <Text className="text-gray-700 text-base mb-4 font-lobold">
                 Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua.
               </Text>
               <View className="flex-row justify-between space-x-4">

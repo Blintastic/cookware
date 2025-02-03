@@ -6,34 +6,33 @@ import BackButton from "@/components/BackButton";
 import CustomButtons from "@/components/CustomButtons";
 
 type SearchParams = {
-  id?: string; // Define `id` as optional since it may not always be present
+  id?: string;
 };
 
 export default function RecipeDetail() {
-  const { id } = useGlobalSearchParams<SearchParams>(); // Explicitly type the search params
-  const [recipe, setRecipe] = useState<any>(null); // Update types as needed
+  const { id } = useGlobalSearchParams<SearchParams>(); 
+  const [recipe, setRecipe] = useState<any>(null);
   const [loading, setLoading] = useState(true);
   const router = useRouter();
 
-  const fetchRecipe = async () => {
-    try {
-      if (!id) {
-        throw new Error("Recipe ID is missing");
-      }
-      const response = await databases.getDocument(
-        appwriteConfig.databaseId,
-        appwriteConfig.recipesCollectionId,
-        id
-      );
-      setRecipe(response);
-    } catch (error) {
-      console.error("Failed to fetch recipe: ", error);
-    } finally {
-      setLoading(false);
-    }
-  };
-
   useEffect(() => {
+    const fetchRecipe = async () => {
+      try {
+        if (!id) throw new Error("Recipe ID is missing");
+        
+        const response = await databases.getDocument(
+          appwriteConfig.databaseId,
+          appwriteConfig.recipesCollectionId,
+          id
+        );
+        setRecipe(response);
+      } catch (error) {
+        console.error("Failed to fetch recipe: ", error);
+      } finally {
+        setLoading(false);
+      }
+    };
+
     if (id) {
       fetchRecipe();
     }
@@ -60,13 +59,11 @@ export default function RecipeDetail() {
 
   return (
     <ScrollView className="flex-1 bg-white">
-      {/* Top Bar */}
       <View className="flex-row justify-between items-center px-4 py-3 border-b border-gray-300">
         <BackButton />
         <Text className="text-base font-medium text-gray-600">{recipe.title}</Text>
       </View>
 
-      {/* Recipe Details */}
       <View className="p-4">
         <Text className="text-2xl font-bold text-gray-800 mb-4">{recipe.title}</Text>
         <Text className="text-gray-600 mb-4">{recipe.description}</Text>
@@ -80,7 +77,7 @@ export default function RecipeDetail() {
       <View className='flex-row items-center justify-between ml-4 mr-4 mt-7'>
         <CustomButtons
           title="Zutaten Anzeigen"
-          handlePress={() => router.push(`/IngredientsListScreen?id=${id}`)} // Navigate to IngredientsListScreen
+          handlePress={() => router.push(`/IngredientsListScreen?id=${id}`)}
           buttonStyle={{ backgroundColor: 'grey', paddingHorizontal: 8 }}
           textStyle={{ color: 'white', fontWeight: 'bold' }}
           disabled={false}
@@ -88,7 +85,7 @@ export default function RecipeDetail() {
 
         <CustomButtons
           title="Kochvorgang starten"
-          handlePress={() => router.push(`/IngredientsListScreen?id=${id}`)} // Navigate to IngredientsListScreen
+          handlePress={() => router.push(`/cookingInformationScreen?id=${id}`)}
           buttonStyle={{ backgroundColor: 'grey', paddingHorizontal: 8 }}
           textStyle={{ color: 'white', fontWeight: 'bold' }}
           disabled={false}

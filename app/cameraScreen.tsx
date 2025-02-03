@@ -9,6 +9,10 @@ import {
 import { Image, View, Text } from "react-native";
 import BackButton from "@/components/BackButton";
 
+import { router } from "expo-router";
+
+import { fetchVideoForIcon } from "./manager/videoManager";
+
 // Array mit zu erkennenden Icons
 const iconsArray = [
   {
@@ -35,9 +39,14 @@ iconsArray.forEach((icon) => {
 ViroARTrackingTargets.createTargets(trackingTargets);
 
 const ARScene = ({ onDetect }: { onDetect: (name: string | null) => void }) => {
-  const handleAnchorFound = (targetName: string) => {
+  const handleAnchorFound = async (targetName: string) => {
     console.log(`Detected: ${targetName}`);
     onDetect(targetName);
+
+    const video = await fetchVideoForIcon(targetName);
+    if (video) {
+      router.push('/videoScreen');
+    }
   };
 
   const handleAnchorLost = (targetName: string) => {
@@ -67,7 +76,7 @@ const CameraScreen = () => {
 
   return (
     <View className="flex-1 relative">
-      <BackButton/>
+      <BackButton />
       <ViroARSceneNavigator
         autofocus={true}
         initialScene={{
@@ -83,7 +92,7 @@ const CameraScreen = () => {
           top: "20%",
           left: "20%",
           width: 500,  // Erhöhte Breite
-          height: 500, 
+          height: 500,
           transform: [{ translateX: -100 }, { translateY: -100 }], // Anpassung für die neue Größe
         }}
       />
