@@ -2,6 +2,9 @@ import React, { useEffect } from 'react';
 import { SplashScreen, Stack } from 'expo-router';
 import HomescreenBar from '@/components/TopBar'; // Import the HomescreenBar
 import { useFonts } from 'expo-font';
+import Toast from 'react-native-toast-message';
+
+import { ShoppingListProvider } from './manager/ShoppingListContext';
 
 SplashScreen.preventAutoHideAsync();
 
@@ -29,23 +32,26 @@ const RootLayout = () => {
 
   return (
     <>
-      {/* Render the HomescreenBar */}
       <HomescreenBar />
+      
+      <ShoppingListProvider>
+        <Stack screenOptions={{headerShown: false}}>
+            <Stack.Screen name="index" />
+            <Stack.Screen name="cookingVideoScreen" />
+            <Stack.Screen name="recipes" />
+            <Stack.Screen name="shoppingListScreen"  />
+            <Stack.Screen name="cameraScreen" options={{ gestureEnabled: true }} /> 
+            <Stack.Screen name="recipeDetailScreen" />
+            <Stack.Screen name="IngredientsListScreen" />
+            <Stack.Screen name="cookingInformationScreen" />
+            <Stack.Screen name="generalVideoOverviewScreen" />
+            <Stack.Screen name="manager/videoManager" />
+            <Stack.Screen name="timerScreen" />
+            <Stack.Screen name="videoOverviewScreen" />
+          </Stack>
+      </ShoppingListProvider>   
 
-      {/* Render the Stack for navigation */}
-      <Stack>
-        <Stack.Screen name="index" options={{ headerShown: false }} />
-        <Stack.Screen name="cookingVideoScreen" options={{ headerShown: false }} />
-        <Stack.Screen name="recipes" options={{ headerShown: false }} />
-        <Stack.Screen name="shoppingListScreen" options={{ headerShown: false }} />
-        <Stack.Screen name="cameraScreen" options={{ headerShown: false }} />
-        <Stack.Screen name="recipeDetailScreen" options={{ headerShown: false }} />
-        <Stack.Screen name="IngredientsListScreen" options={{ headerShown: false }} />
-        <Stack.Screen name="cookingInformationScreen" options={{ headerShown: false }} />
-        <Stack.Screen name="videoOverviewScreen" options={{ headerShown: false }} />
-        <Stack.Screen name="timerScreen" options={{ headerShown: false }} />
-        <Stack.Screen name="videoScreen" options={{ headerShown: false }} />
-      </Stack>
+      <Toast />
     </>
   );
 };

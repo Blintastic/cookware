@@ -7,8 +7,10 @@ export default function TimerButton() {
 
   const handlePress = () => {
     if (timerActive) {
-      setTimerActive(false); // Reset timer state
+      // Cancel the timer
+      setTimerActive(false);
     } else {
+      // Navigate to the timer selection screen
       router.push("/timerScreen");
     }
   };
@@ -18,7 +20,9 @@ export default function TimerButton() {
       className="absolute bottom-8 bg-gray-300 rounded-full p-6 z-10 ml-2 right-12"
       onPress={handlePress}
     >
-      <Text className="text-gray-600 text-2xl">{timerActive ? "⏳" : "⏲️"}</Text>
+      <Text className="text-gray-600 text-2xl">
+        {timerActive ? "⏳" : "⏲️"}
+      </Text>
     </TouchableOpacity>
   );
 }

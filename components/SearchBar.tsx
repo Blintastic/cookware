@@ -14,7 +14,7 @@ const SearchBar = () => {
   };
 
   return (
-    <View className="flex-1 flex-row items-center border border-black rounded-full px-3 mx-3 h-10">
+    <View className="flex-1 flex-row items-center border border-black rounded-full px-3 mx-3 h-10 mr-8">
       <TextInput
         value={searchQuery}
         onChangeText={setSearchQuery}

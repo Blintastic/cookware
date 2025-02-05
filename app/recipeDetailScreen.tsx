@@ -1,5 +1,6 @@
 import { View, Text, ScrollView, ActivityIndicator, TouchableOpacity } from "react-native";
 import React, { useEffect, useState } from "react";
+import AsyncStorage from "@react-native-async-storage/async-storage"; // Import AsyncStorage
 import { databases, appwriteConfig } from "../lib/appwriteConfig";
 import { useRouter, useGlobalSearchParams } from "expo-router";
 import BackButton from "@/components/BackButton";
@@ -10,7 +11,7 @@ type SearchParams = {
 };
 
 export default function RecipeDetail() {
-  const { id } = useGlobalSearchParams<SearchParams>(); 
+  const { id } = useGlobalSearchParams<SearchParams>();
   const [recipe, setRecipe] = useState<any>(null);
   const [loading, setLoading] = useState(true);
   const router = useRouter();
@@ -19,7 +20,8 @@ export default function RecipeDetail() {
     const fetchRecipe = async () => {
       try {
         if (!id) throw new Error("Recipe ID is missing");
-        
+
+        // Fetch the recipe details from the database
         const response = await databases.getDocument(
           appwriteConfig.databaseId,
           appwriteConfig.recipesCollectionId,
@@ -57,6 +59,20 @@ export default function RecipeDetail() {
     );
   }
 
+  // Function to handle "Kochvorgang starten" button press
+  const handleStartCooking = async () => {
+    try {
+      // Save the recipe ID to AsyncStorage as the last viewed recipe
+      if (id) {
+        await AsyncStorage.setItem("lastRecipeId", id);
+      }
+      // Navigate to the cooking information screen
+      router.push(`/cookingInformationScreen?id=${id}`);
+    } catch (error) {
+      console.error("Error saving last recipe ID: ", error);
+    }
+  };
+
   return (
     <ScrollView className="flex-1 bg-white">
       <View className="flex-row justify-between items-center px-4 py-3 border-b border-gray-300">
@@ -85,7 +101,7 @@ export default function RecipeDetail() {
 
         <CustomButtons
           title="Kochvorgang starten"
-          handlePress={() => router.push(`/cookingInformationScreen?id=${id}`)}
+          handlePress={handleStartCooking} // Use the custom handler
           buttonStyle={{ backgroundColor: 'grey', paddingHorizontal: 8 }}
           textStyle={{ color: 'white', fontWeight: 'bold' }}
           disabled={false}

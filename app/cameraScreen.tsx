@@ -1,60 +1,103 @@
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import {
   ViroARScene,
   ViroARSceneNavigator,
   ViroARTrackingTargets,
   ViroARImageMarker,
-  ViroAmbientLight,
+
 } from "@viro-community/react-viro";
-import { Image, View, Text } from "react-native";
-import BackButton from "@/components/BackButton";
-
+import { Image, View, Text, TouchableOpacity } from "react-native";
 import { router } from "expo-router";
+import { databases, appwriteConfig } from "../lib/appwriteConfig";
 
-import { fetchVideoForIcon } from "./manager/videoManager";
+// Define types for icons and tracking targets
+type Icon = {
+  name: string;
+  source: string;
+  physicalWidth: number;
+  videos: string; // Single video ID string
+};
 
-// Array mit zu erkennenden Icons
-const iconsArray = [
-  {
-    name: "testIcon1",
-    source: require("../assets/icons/testIcon1.jpg"),
-    physicalWidth: 0.165,
-  },
-  {
-    name: "testIcon2",
-    source: require("../assets/icons/testIcon2.jpg"),
-    physicalWidth: 0.2,
-  },
-];
+type TrackingTarget = {
+  source: { uri: string };
+  orientation: string;
+  physicalWidth: number;
+};
 
-// Tracking-Ziele registrieren
-const trackingTargets: Record<string, { source: any; orientation: string; physicalWidth: number }> = {};
-iconsArray.forEach((icon) => {
-  trackingTargets[icon.name] = {
-    source: icon.source,
-    orientation: "Up",
-    physicalWidth: icon.physicalWidth,
-  };
-});
-ViroARTrackingTargets.createTargets(trackingTargets);
+const CameraScreen = () => {
+  const [iconsArray, setIconsArray] = useState<Icon[]>([]);
+  const [loading, setLoading] = useState(true);
+  const [arNavigator, setArNavigator] = useState(true);
 
-const ARScene = ({ onDetect }: { onDetect: (name: string | null) => void }) => {
-  const handleAnchorFound = async (targetName: string) => {
-    console.log(`Detected: ${targetName}`);
-    onDetect(targetName);
+  useEffect(() => {
+    const fetchIcons = async () => {
+      try {
+        const response = await databases.listDocuments(
+          appwriteConfig.databaseId,
+          appwriteConfig.iconsCollectionId
+        );
 
-    const video = await fetchVideoForIcon(targetName);
-    if (video) {
-      router.push('/videoScreen');
+        const icons = response.documents.map((icon: any) => {
+          let videoId = "";
+
+          if (Array.isArray(icon.videos) && icon.videos.length > 0) {
+            videoId = icon.videos[0]?.$id || "";
+          } else if (typeof icon.videos === "object" && icon.videos?.$id) {
+            videoId = icon.videos.$id;
+          } else if (typeof icon.videos === "string") {
+            videoId = icon.videos;
+          }
+
+          return {
+            name: icon.name,
+            source: icon.image,
+            physicalWidth: 0.1,
+            videos: videoId,
+          };
+        });
+
+        setIconsArray(icons);
+      } catch (error) {
+        console.error("Error fetching icons:", error);
+      } finally {
+        setLoading(false);
+      }
+    };
+
+    fetchIcons();
+  }, []);
+
+  useEffect(() => {
+    if (iconsArray.length > 0) {
+      const trackingTargets: Record<string, TrackingTarget> = {};
+      iconsArray.forEach((icon) => {
+        trackingTargets[icon.name] = {
+          source: { uri: icon.source },
+          orientation: "Up",
+          physicalWidth: icon.physicalWidth,
+        };
+      });
+      ViroARTrackingTargets.createTargets(trackingTargets);
+    }
+  }, [iconsArray]);
+
+  const handleAnchorFound = (iconName: string) => {
+    const detectedIcon = iconsArray.find((icon) => icon.name === iconName);
+
+    if (detectedIcon && detectedIcon.videos) {
+      const videoId = detectedIcon.videos;
+
+      router.push(`./manager/videoManager?videoId=${videoId}`)
+    } else {
+      console.warn(`No video ID found for icon: ${iconName}`);
     }
   };
 
-  const handleAnchorLost = (targetName: string) => {
-    console.log(`Lost: ${targetName}`);
-    onDetect(null);
+  const handleAnchorLost = (iconName: string) => {
+    console.log(`Lost: ${iconName}`);
   };
 
-  return (
+  const ARScene = () => (
     <ViroARScene>
       {iconsArray.map((icon) => (
         <ViroARImageMarker
@@ -62,28 +105,29 @@ const ARScene = ({ onDetect }: { onDetect: (name: string | null) => void }) => {
           target={icon.name}
           onAnchorFound={() => handleAnchorFound(icon.name)}
           onAnchorRemoved={() => handleAnchorLost(icon.name)}
-        >
-          <ViroAmbientLight color="#ffffff" />
-        </ViroARImageMarker>
+        />
       ))}
     </ViroARScene>
   );
-};
-
-// Kamera-Screen mit Overlay
-const CameraScreen = () => {
-  const [detectedText, setDetectedText] = useState<string | null>(null);
 
   return (
     <View className="flex-1 relative">
-      <BackButton />
-      <ViroARSceneNavigator
-        autofocus={true}
-        initialScene={{
-          scene: () => <ARScene onDetect={setDetectedText} />,
-        }}
-        className="flex-1"
-      />
+      <TouchableOpacity onPress={() => router.push("/")} className="flex-row items-center">
+        <Text className="text-lg font-semibold text-black">← Zurück</Text>
+      </TouchableOpacity>
+      {loading ? (
+        <View className="flex-1 justify-center items-center">
+          <Text className="text-white">Loading icons...</Text>
+        </View>
+      ) : (
+        arNavigator && (
+          <ViroARSceneNavigator
+            autofocus={true}
+            initialScene={{ scene: ARScene }}
+            className="flex-1"
+          />
+        )
+      )}
       <Image
         source={require("../images/ScanningOverlay.png")}
         className="absolute inset-0"
@@ -91,30 +135,11 @@ const CameraScreen = () => {
           position: "absolute",
           top: "20%",
           left: "20%",
-          width: 500,  // Erhöhte Breite
-          height: 500,
-          transform: [{ translateX: -100 }, { translateY: -100 }], // Anpassung für die neue Größe
+          width: 350,
+          height: 350,
+          transform: [{ translateX: -55 }, { translateY: 10 }],
         }}
       />
-
-      {/* Overlay für Scan-Ergebnis */}
-      {detectedText && (
-        <View
-          style={{
-            position: "absolute",
-            top: 50,
-            left: 0,
-            right: 0,
-            backgroundColor: "rgba(0, 0, 0, 0.7)",
-            padding: 10,
-            alignItems: "center",
-          }}
-        >
-          <Text style={{ color: "white", fontSize: 18, fontWeight: "bold" }}>
-            Erkannt: {detectedText}
-          </Text>
-        </View>
-      )}
     </View>
   );
 };

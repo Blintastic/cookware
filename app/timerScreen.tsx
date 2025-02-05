@@ -1,128 +1,130 @@
-import React, { useState, useEffect } from 'react';
-import { View, Text, TouchableOpacity, TextInput } from 'react-native';
+import React, { useState } from 'react';
+import { View, Text, TouchableOpacity, StyleSheet } from 'react-native';
 import { router } from 'expo-router';
 import BackButton from '@/components/BackButton';
-import { Picker } from '@react-native-picker/picker'; // Import the picker
+import { Picker } from '@react-native-picker/picker';
 
 const TimerScreen = () => {
-  const [isRunning, setIsRunning] = useState(false);
-  const [hours, setHours] = useState(0);
-  const [minutes, setMinutes] = useState(0);
-  const [remainingTime, setRemainingTime] = useState<number | null>(null);
-
-  useEffect(() => {
-    let interval: NodeJS.Timeout | null = null;
-
-    if (isRunning && remainingTime !== null) {
-      interval = setInterval(() => {
-        setRemainingTime((prev) => {
-          if (prev === 0) {
-            clearInterval(interval!);
-            setIsRunning(false);
-            return null;
-          }
-          return prev! - 1000;
-        });
-      }, 1000);
-    }
-
-    return () => {
-      if (interval) {
-        clearInterval(interval);
-      }
-    };
-  }, [isRunning, remainingTime]);
+  const [hours, setHours] = useState('0'); // Store hours as a string
+  const [minutes, setMinutes] = useState('0'); // Store minutes as a string
 
   const handleSetTimer = () => {
-    const totalSeconds = hours * 3600 + minutes * 60;
+    const totalSeconds = parseInt(hours, 10) * 3600 + parseInt(minutes, 10) * 60;
     if (totalSeconds > 0) {
-      setRemainingTime(totalSeconds * 1000);
-      setIsRunning(true);
+      console.log(`Timer set for ${totalSeconds} seconds`);
       router.back();
     }
   };
 
   const handleCancelTimer = () => {
-    setHours(0);
-    setMinutes(0);
-    setRemainingTime(null);
-    setIsRunning(false);
+    setHours('0');
+    setMinutes('0');
     router.back();
   };
 
-  const handleButtonPress = () => {
-    if (isRunning) {
-      setIsRunning(false);
-      setRemainingTime(null);
-    } else {
-      const totalSeconds = hours * 3600 + minutes * 60;
-      setRemainingTime(totalSeconds * 1000);
-      setIsRunning(true);
-    }
-  };
-
   return (
-    <View className="flex-1 justify-center items-center bg-white">
+    <View style={styles.container}>
+      {/* Back Button */}
       <BackButton />
 
-      <Text className="text-2xl mb-4">
-        {remainingTime !== null
-          ? `Remaining Time: ${Math.floor(remainingTime / 1000)}s`
-          : 'Set Timer Duration:'}
-      </Text>
+      {/* Title */}
+      <Text style={styles.title}>Set Timer Duration:</Text>
 
-      {!isRunning && remainingTime === null && (
-        <View className="flex-row items-center">
-          {/* Hours Picker */}
-          <Picker
-            selectedValue={hours}
-            style={{ height: 50, width: 100 }}
-            onValueChange={(itemValue) => setHours(Number(itemValue))}
-          >
-            {Array.from({ length: 24 }, (_, i) => (
-              <Picker.Item key={i} label={`${i} h`} value={i} />
-            ))}
-          </Picker>
+      {/* Selected Time Display */}
+      <View style={styles.selectedTimeContainer}>
+        <Text style={styles.selectedTimeText}>
+          {`${hours.padStart(2, '0')}:${minutes.padStart(2, '0')}`}
+        </Text>
+      </View>
 
-          {/* Minutes Picker */}
-          <Picker
-            selectedValue={minutes}
-            style={{ height: 50, width: 100 }}
-            onValueChange={(itemValue) => setMinutes(Number(itemValue))}
-          >
-            {Array.from({ length: 60 }, (_, i) => (
-              <Picker.Item key={i} label={`${i} min`} value={i} />
-            ))}
-          </Picker>
-        </View>
-      )}
-
-      {!isRunning && remainingTime === null && (
-        <TouchableOpacity
-          className="bg-green-500 p-4 rounded mt-4"
-          onPress={handleSetTimer}
+      {/* Pickers Container */}
+      <View style={styles.pickersContainer}>
+        {/* Hours Picker */}
+        <Picker
+          selectedValue={hours}
+          style={styles.picker}
+          onValueChange={(itemValue) => setHours(itemValue)}
         >
-          <Text className="text-white">Set Timer</Text>
-        </TouchableOpacity>
-      )}
+          {Array.from({ length: 24 }, (_, i) => (
+            <Picker.Item key={i} label={`${i} h`} value={i.toString()} />
+          ))}
+        </Picker>
 
-      {isRunning && (
-        <TouchableOpacity
-          className="bg-blue-500 p-4 rounded mt-4"
-          onPress={handleButtonPress}
+        {/* Minutes Picker */}
+        <Picker
+          selectedValue={minutes}
+          style={styles.picker}
+          onValueChange={(itemValue) => setMinutes(itemValue)}
         >
-          <Text className="text-white">Stop Timer</Text>
-        </TouchableOpacity>
-      )}
+          {Array.from({ length: 60 }, (_, i) => (
+            <Picker.Item key={i} label={`${i} min`} value={i.toString()} />
+          ))}
+        </Picker>
+      </View>
 
-      <TouchableOpacity
-        className="bg-red-500 p-4 rounded mt-4"
-        onPress={handleCancelTimer}
-      >
-        <Text className="text-white">Cancel Timer</Text>
-      </TouchableOpacity>
+      {/* Buttons Container */}
+      <View style={styles.buttonsContainer}>
+        {/* Set Timer Button */}
+        <TouchableOpacity style={styles.button} onPress={handleSetTimer}>
+          <Text style={styles.buttonText}>Set Timer</Text>
+        </TouchableOpacity>
+
+        {/* Cancel Timer Button */}
+        <TouchableOpacity style={styles.button} onPress={handleCancelTimer}>
+          <Text style={styles.buttonText}>Cancel Timer</Text>
+        </TouchableOpacity>
+      </View>
     </View>
   );
 };
+
+// Styles
+const styles = StyleSheet.create({
+  container: {
+    flex: 1,
+    justifyContent: 'center',
+    alignItems: 'center',
+    backgroundColor: '#fff',
+    padding: 20,
+  },
+  title: {
+    fontSize: 24,
+    marginBottom: 20,
+  },
+  selectedTimeContainer: {
+    marginBottom: 20, // Add space below the selected time display
+  },
+  selectedTimeText: {
+    fontSize: 28,
+    fontWeight: 'bold',
+    color: '#333',
+  },
+  pickersContainer: {
+    flexDirection: 'row', // Place pickers side by side
+    alignItems: 'center',
+    marginBottom: 30, // Add space below the pickers
+  },
+  picker: {
+    height: 50,
+    width: 100,
+    marginHorizontal: 10, // Add horizontal spacing between pickers
+  },
+  buttonsContainer: {
+    flexDirection: 'column', // Stack buttons vertically
+    alignItems: 'center', // Center buttons horizontally
+  },
+  button: {
+    backgroundColor: '#4CAF50', // Green for Set Timer
+    padding: 15,
+    borderRadius: 8,
+    marginBottom: 10, // Add vertical spacing between buttons
+    width: '80%', // Make buttons take up 80% of the screen width
+    alignItems: 'center',
+  },
+  buttonText: {
+    color: '#fff',
+    fontSize: 16,
+  },
+});
 
 export default TimerScreen;

@@ -1,44 +1,29 @@
 import React, { useEffect, useState } from "react";
 import { View, Text, ActivityIndicator, FlatList, TouchableOpacity, Image } from "react-native";
 import { databases, appwriteConfig } from "../lib/appwriteConfig";
-import { useLocalSearchParams, useRouter} from "expo-router";
+import { useRouter } from "expo-router";
+import BackButton from "@/components/BackButton";
 
-const VideoOverview = () => {
-  const { id } = useLocalSearchParams();
+const GeneralVideoOverviewScreen = () => {
   const [videos, setVideos] = useState([]);
   const [loading, setLoading] = useState(true);
   const router = useRouter();
 
   useEffect(() => {
-    const fetchVideos = async () => {
+    const fetchAllVideos = async () => {
       try {
-        const recipe = await databases.getDocument(
+        // Fetch all videos from the "videos" collection
+        const response = await databases.listDocuments(
           appwriteConfig.databaseId,
-          appwriteConfig.recipesCollectionId,
-          id as string
+          appwriteConfig.videosCollectionId
         );
 
-        const videoIds = (recipe.videos || []).map(video => video.$id);
-
-        if (!Array.isArray(videoIds) || videoIds.length === 0) {
-          setVideos([]);
-          setLoading(false);
-          return;
-        }
-
-        // Fetch video details based on IDs
-        const videoDetails = await Promise.all(videoIds.map(async (videoId) => {
-          const video = await databases.getDocument(
-            appwriteConfig.databaseId,
-            appwriteConfig.videosCollectionId,
-            videoId
-          );
-          return {
-            id: video.$id,
-            title: video.title,
-            thumbnail: video.thumbnail, 
-            videoUrl: video.video, // Add the video URL here
-          };
+        // Map the fetched documents to a simplified structure
+        const videoDetails = response.documents.map((video) => ({
+          id: video.$id,
+          title: video.title,
+          thumbnail: video.thumbnail, // Assuming the thumbnail URL is stored in the database
+          videoUrl: video.video, // Assuming the video URL is stored in the database
         }));
 
         setVideos(videoDetails);
@@ -49,13 +34,13 @@ const VideoOverview = () => {
       }
     };
 
-    fetchVideos();
-  }, [id]);
+    fetchAllVideos();
+  }, []);
 
   const renderItem = ({ item }) => (
     <TouchableOpacity
       className="mb-4 bg-white rounded-lg shadow-md overflow-hidden"
-      onPress={() => router.push(`./manager/videoManager?videoId=${item.id}`)}
+      onPress={() => router.push(`./manager/videoManager?videoId=${item.id}`)} // Navigate to videoManager
     >
       <Image source={{ uri: item.thumbnail }} className="w-full h-48 object-cover" />
       <Text className="p-2 text-lg font-semibold text-center">{item.title}</Text>
@@ -63,7 +48,8 @@ const VideoOverview = () => {
   );
 
   return (
-    <View className="flex-1 p-4">
+    <View className="flex-1 p-4 bg-gray-100">
+        <BackButton />
       {loading ? (
         <ActivityIndicator size="large" color="#0000ff" />
       ) : videos.length > 0 ? (
@@ -74,10 +60,10 @@ const VideoOverview = () => {
           contentContainerStyle={{ paddingBottom: 16 }}
         />
       ) : (
-        <Text className="text-center text-lg">No videos found</Text>
+        <Text className="text-center text-lg text-gray-600">No videos found</Text>
       )}
     </View>
   );
 };
 
-export default VideoOverview;
+export default GeneralVideoOverviewScreen;

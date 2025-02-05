@@ -1,9 +1,15 @@
-import React from 'react';
-import { View, SafeAreaView } from 'react-native';
+import React, { useState } from 'react';
+import { View, SafeAreaView, TouchableOpacity, Text } from 'react-native';
 import SearchBar from './SearchBar';
 import HamburgerMenu from './HamburgerMenu'; // Import the HamburgerMenu
 
 const HomescreenBar = () => {
+  const [isMenuOpen, setMenuOpen] = useState(false);
+
+  const toggleMenu = () => {
+    setMenuOpen(!isMenuOpen);
+  };
+
   return (
     <SafeAreaView className="bg-white">
       <View className="flex-row items-center justify-between px-4 py-2 border-b border-black relative">
@@ -13,11 +19,17 @@ const HomescreenBar = () => {
         {/* SearchBar */}
         <SearchBar />
 
-        {/* HamburgerMenu with absolute positioning */}
-        <View style={{ position: 'absolute', right: 16, top: 16, zIndex: 100 }}>
-          <HamburgerMenu />
-        </View>
+        {/* Hamburger Menu Button */}
+        <TouchableOpacity 
+          style={{ position: 'absolute', right: 16, top: 16 }} 
+          onPress={toggleMenu}
+        >
+          <Text style={{ fontSize: 24 }}>☰</Text>
+        </TouchableOpacity>
       </View>
+
+      {/* Render HamburgerMenu and pass the state and toggle function */}
+      <HamburgerMenu isOpen={isMenuOpen} toggleMenu={toggleMenu} />
     </SafeAreaView>
   );
 };
