@@ -4,7 +4,6 @@ import {
   ViroARSceneNavigator,
   ViroARTrackingTargets,
   ViroARImageMarker,
-
 } from "@viro-community/react-viro";
 import { Image, View, Text, TouchableOpacity } from "react-native";
 import { router } from "expo-router";
@@ -16,6 +15,8 @@ type Icon = {
   source: string;
   physicalWidth: number;
   videos: string; // Single video ID string
+  recipes: string; // Recipe ID string
+  icon_type: "video" | "recipe" | "timer"; // Enum for icon type
 };
 
 type TrackingTarget = {
@@ -39,7 +40,9 @@ const CameraScreen = () => {
 
         const icons = response.documents.map((icon: any) => {
           let videoId = "";
+          let recipeId = "";
 
+          // Extract video ID
           if (Array.isArray(icon.videos) && icon.videos.length > 0) {
             videoId = icon.videos[0]?.$id || "";
           } else if (typeof icon.videos === "object" && icon.videos?.$id) {
@@ -48,11 +51,20 @@ const CameraScreen = () => {
             videoId = icon.videos;
           }
 
+          // Extract recipe ID
+          if (typeof icon.recipes === "object" && icon.recipes?.$id) {
+            recipeId = icon.recipes.$id;
+          } else if (typeof icon.recipes === "string") {
+            recipeId = icon.recipes;
+          }
+
           return {
             name: icon.name,
             source: icon.image,
             physicalWidth: 0.1,
             videos: videoId,
+            recipes: recipeId, // Only the recipe ID is stored here
+            icon_type: icon.icon_type || "video", // Default to "video"
           };
         });
 
@@ -84,12 +96,35 @@ const CameraScreen = () => {
   const handleAnchorFound = (iconName: string) => {
     const detectedIcon = iconsArray.find((icon) => icon.name === iconName);
 
-    if (detectedIcon && detectedIcon.videos) {
-      const videoId = detectedIcon.videos;
+    if (!detectedIcon) {
+      console.warn(`No icon found for name: ${iconName}`);
+      return;
+    }
 
-      router.push(`./manager/videoManager?videoId=${videoId}`)
-    } else {
-      console.warn(`No video ID found for icon: ${iconName}`);
+    switch (detectedIcon.icon_type) {
+      case "video":
+        if (detectedIcon.videos) {
+          router.push(`./manager/videoManager?videoId=${detectedIcon.videos}`);
+        } else {
+          console.warn(`No video ID found for icon: ${iconName}`);
+        }
+        break;
+
+      case "recipe":
+        if (detectedIcon.recipes) {
+          router.push(`./cookingInformationScreen?id=${detectedIcon.recipes}`);
+        } else {
+          console.warn(`No recipe ID found for icon: ${iconName}`);
+        }
+        break;
+
+      case "timer":
+        console.log("Timer functionality not implemented yet.");
+        break;
+
+      default:
+        console.warn(`Unknown icon type: ${detectedIcon.icon_type}`);
+        break;
     }
   };
 

@@ -70,6 +70,14 @@
   <uses-permission android:name="android.permission.CAMERA"/>
   <uses-permission android:name="android.permission.CAMERA"/>
   <uses-permission android:name="android.permission.CAMERA"/>
+  <uses-permission android:name="android.permission.CAMERA"/>
+  <uses-permission android:name="android.permission.CAMERA"/>
+  <uses-permission android:name="android.permission.CAMERA"/>
+  <uses-permission android:name="android.permission.CAMERA"/>
+  <uses-permission android:name="android.permission.CAMERA"/>
+  <uses-permission android:name="android.permission.CAMERA"/>
+  <uses-permission android:name="android.permission.CAMERA"/>
+  <uses-permission android:name="android.permission.CAMERA"/>
   <uses-permission android:name="android.permission.INTERNET"/>
   <uses-permission android:name="android.permission.MODIFY_AUDIO_SETTINGS"/>
   <uses-permission android:name="android.permission.READ_EXTERNAL_STORAGE"/>
@@ -156,6 +164,14 @@
     <meta-data android:name="com.google.ar.core" android:value="optional"/>
     <meta-data android:name="com.google.ar.core" android:value="optional"/>
     <meta-data android:name="com.google.ar.core" android:value="optional"/>
+    <meta-data android:name="com.google.ar.core" android:value="optional"/>
+    <meta-data android:name="com.google.ar.core" android:value="optional"/>
+    <meta-data android:name="com.google.ar.core" android:value="optional"/>
+    <meta-data android:name="com.google.ar.core" android:value="optional"/>
+    <meta-data android:name="com.google.ar.core" android:value="optional"/>
+    <meta-data android:name="com.google.ar.core" android:value="optional"/>
+    <meta-data android:name="com.google.ar.core" android:value="optional"/>
+    <meta-data android:name="com.google.ar.core" android:value="optional"/>
     <meta-data android:name="expo.modules.updates.ENABLED" android:value="false"/>
     <meta-data android:name="expo.modules.updates.EXPO_UPDATES_CHECK_ON_LAUNCH" android:value="ALWAYS"/>
     <meta-data android:name="expo.modules.updates.EXPO_UPDATES_LAUNCH_WAIT_MS" android:value="0"/>
@@ -163,6 +179,22 @@
       <intent-filter>
         <action android:name="android.intent.action.MAIN"/>
         <category android:name="android.intent.category.LAUNCHER"/>
+        <category android:name="com.google.intent.category.CARDBOARD"/>
+        <category android:name="com.google.intent.category.DAYDREAM"/>
+        <category android:name="com.google.intent.category.CARDBOARD"/>
+        <category android:name="com.google.intent.category.DAYDREAM"/>
+        <category android:name="com.google.intent.category.CARDBOARD"/>
+        <category android:name="com.google.intent.category.DAYDREAM"/>
+        <category android:name="com.google.intent.category.CARDBOARD"/>
+        <category android:name="com.google.intent.category.DAYDREAM"/>
+        <category android:name="com.google.intent.category.CARDBOARD"/>
+        <category android:name="com.google.intent.category.DAYDREAM"/>
+        <category android:name="com.google.intent.category.CARDBOARD"/>
+        <category android:name="com.google.intent.category.DAYDREAM"/>
+        <category android:name="com.google.intent.category.CARDBOARD"/>
+        <category android:name="com.google.intent.category.DAYDREAM"/>
+        <category android:name="com.google.intent.category.CARDBOARD"/>
+        <category android:name="com.google.intent.category.DAYDREAM"/>
         <category android:name="com.google.intent.category.CARDBOARD"/>
         <category android:name="com.google.intent.category.DAYDREAM"/>
         <category android:name="com.google.intent.category.CARDBOARD"/>

@@ -2,7 +2,6 @@ import { View, Text, ScrollView, TouchableOpacity } from "react-native";
 import React, { useState, useEffect } from "react";
 import { useRouter, useGlobalSearchParams } from "expo-router";
 import BackButton from "@/components/BackButton";
-import CustomButtons from "@/components/CustomButtons";
 import { databases, appwriteConfig } from "../lib/appwriteConfig";
 import CameraButton from "@/components/CameraButton";
 import VideoOVerviewButton from "@/components/VideoOverviewButton";
