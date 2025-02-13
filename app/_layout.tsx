@@ -5,6 +5,7 @@ import { useFonts } from 'expo-font';
 import Toast from 'react-native-toast-message';
 
 import { ShoppingListProvider } from './manager/ShoppingListContext';
+import { DataProvider } from '../lib/DataProvider';
 
 SplashScreen.preventAutoHideAsync();
 
@@ -33,24 +34,24 @@ const RootLayout = () => {
   return (
     <>
       <HomescreenBar />
-      
-      <ShoppingListProvider>
-        <Stack screenOptions={{headerShown: false}}>
-            <Stack.Screen name="index" />
-            <Stack.Screen name="cookingVideoScreen" />
-            <Stack.Screen name="recipes" />
-            <Stack.Screen name="shoppingListScreen"  />
-            <Stack.Screen name="cameraScreen" options={{ gestureEnabled: true }} /> 
-            <Stack.Screen name="recipeDetailScreen" />
-            <Stack.Screen name="IngredientsListScreen" />
-            <Stack.Screen name="cookingInformationScreen" />
-            <Stack.Screen name="generalVideoOverviewScreen" />
-            <Stack.Screen name="manager/videoManager" />
-            <Stack.Screen name="timerScreen" />
-            <Stack.Screen name="videoOverviewScreen" />
-          </Stack>
-      </ShoppingListProvider>   
-
+      <DataProvider>
+        <ShoppingListProvider>
+          <Stack screenOptions={{headerShown: false}}>
+              <Stack.Screen name="index" />
+              <Stack.Screen name="cookingVideoScreen" />
+              <Stack.Screen name="recipes" />
+              <Stack.Screen name="shoppingListScreen"  />
+              <Stack.Screen name="cameraScreen" options={{ gestureEnabled: true }} /> 
+              <Stack.Screen name="recipeDetailScreen" />
+              <Stack.Screen name="IngredientsListScreen" />
+              <Stack.Screen name="cookingInformationScreen" />
+              <Stack.Screen name="generalVideoOverviewScreen" />
+              <Stack.Screen name="manager/videoManager" />
+              <Stack.Screen name="timerScreen" />
+              <Stack.Screen name="videoOverviewScreen" />
+            </Stack>
+        </ShoppingListProvider>   
+      </DataProvider>
       <Toast />
     </>
   );

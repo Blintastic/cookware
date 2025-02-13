@@ -3,64 +3,147 @@ import { View, Text, ActivityIndicator, FlatList, TouchableOpacity, Image } from
 import { databases, appwriteConfig } from "../lib/appwriteConfig";
 import { useRouter } from "expo-router";
 import BackButton from "@/components/BackButton";
+import { Audio } from "expo-av"; // Import expo-av for video metadata
+import Icon from "react-native-vector-icons/MaterialIcons"; // Import MaterialIcons for icons
 
 const GeneralVideoOverviewScreen = () => {
   const [videos, setVideos] = useState([]);
+  const [kitchenHacks, setKitchenHacks] = useState([]);
   const [loading, setLoading] = useState(true);
+  const [activeTab, setActiveTab] = useState("videos"); // State to manage active tab
   const router = useRouter();
 
   useEffect(() => {
-    const fetchAllVideos = async () => {
+    const fetchData = async () => {
       try {
-        // Fetch all videos from the "videos" collection
-        const response = await databases.listDocuments(
+        // Fetch all videos
+        const videoResponse = await databases.listDocuments(
           appwriteConfig.databaseId,
           appwriteConfig.videosCollectionId
         );
-
-        // Map the fetched documents to a simplified structure
-        const videoDetails = response.documents.map((video) => ({
+        const videoDetails = videoResponse.documents.map((video) => ({
           id: video.$id,
           title: video.title,
-          thumbnail: video.thumbnail, // Assuming the thumbnail URL is stored in the database
-          videoUrl: video.video, // Assuming the video URL is stored in the database
+          thumbnail: video.thumbnail,
+          videoUrl: video.video,
         }));
 
-        setVideos(videoDetails);
+        const videosWithDuration = await Promise.all(
+          videoDetails.map(async (video) => {
+            const duration = await getVideoDuration(video.videoUrl);
+            return { ...video, duration };
+          })
+        );
+
+        setVideos(videosWithDuration);
+
+        // Fetch all kitchen hacks
+        const kitchenHacksResponse = await databases.listDocuments(
+          appwriteConfig.databaseId,
+          appwriteConfig.kitchenHacksCollectionId
+        );
+        const kitchenHacksDetails = kitchenHacksResponse.documents.map((hack) => ({
+          id: hack.$id,
+          title: hack.title,
+          content: hack.content,
+        }));
+        setKitchenHacks(kitchenHacksDetails);
       } catch (error) {
-        console.error("Error fetching videos:", error);
+        console.error("Error fetching data:", error);
       } finally {
         setLoading(false);
       }
     };
 
-    fetchAllVideos();
+    fetchData();
   }, []);
 
-  const renderItem = ({ item }) => (
+  const getVideoDuration = async (videoUrl) => {
+    try {
+      const { sound } = await Audio.Sound.createAsync({ uri: videoUrl });
+      const status = await sound.getStatusAsync();
+      await sound.unloadAsync();
+      return status.durationMillis;
+    } catch (error) {
+      console.error("Error fetching video duration:", error);
+      return null;
+    }
+  };
+
+  const formatDuration = (durationMillis) => {
+    if (!durationMillis) return "00:00";
+    const minutes = Math.floor(durationMillis / 60000);
+    const seconds = Math.floor((durationMillis % 60000) / 1000);
+    return `${String(minutes).padStart(2, "0")}:${String(seconds).padStart(2, "0")}`;
+  };
+
+  const renderVideoItem = ({ item }) => (
     <TouchableOpacity
       className="mb-4 bg-white rounded-lg shadow-md overflow-hidden"
-      onPress={() => router.push(`./manager/videoManager?videoId=${item.id}`)} // Navigate to videoManager
+      onPress={() => router.push(`./manager/videoManager?videoId=${item.id}`)}
     >
       <Image source={{ uri: item.thumbnail }} className="w-full h-48 object-cover" />
-      <Text className="p-2 text-lg font-semibold text-center">{item.title}</Text>
+      <View className="p-2">
+        <Text className="text-lg font-semibold text-center">{item.title}</Text>
+        <View className="flex-row items-center justify-center mt-1">
+          <Icon name="timer" size={16} color="#666" />
+          <Text className="ml-1 text-gray-600">{formatDuration(item.duration)}</Text>
+        </View>
+      </View>
+    </TouchableOpacity>
+  );
+
+  const renderHackItem = ({ item }) => (
+    <TouchableOpacity
+      className="mb-4 bg-white rounded-lg shadow-md p-4"
+      onPress={() => router.push(`./kitchenHackDetailScreen?hackId=${item.id}`)} // Navigate to hack detail
+    >
+      <Text className="text-lg font-semibold text-center">{item.title}</Text>
+      <Text className="mt-2 text-gray-600">{item.content}</Text>
     </TouchableOpacity>
   );
 
   return (
     <View className="flex-1 p-4 bg-gray-100">
-        <BackButton />
+      <BackButton />
+      {/* Tab Selector */}
+      <View className="flex-row justify-around mb-4">
+        <TouchableOpacity
+          className={`px-4 py-2 rounded-full ${activeTab === "videos" ? "bg-blue-500" : "bg-gray-300"}`}
+          onPress={() => setActiveTab("videos")}
+        >
+          <Text className={`text-white ${activeTab === "videos" ? "font-bold" : ""}`}>Videos</Text>
+        </TouchableOpacity>
+        <TouchableOpacity
+          className={`px-4 py-2 rounded-full ${activeTab === "hacks" ? "bg-blue-500" : "bg-gray-300"}`}
+          onPress={() => setActiveTab("hacks")}
+        >
+          <Text className={`text-white ${activeTab === "hacks" ? "font-bold" : ""}`}>Kitchen Hacks</Text>
+        </TouchableOpacity>
+      </View>
+
       {loading ? (
         <ActivityIndicator size="large" color="#0000ff" />
-      ) : videos.length > 0 ? (
+      ) : activeTab === "videos" ? (
+        videos.length > 0 ? (
+          <FlatList
+            data={videos}
+            renderItem={renderVideoItem}
+            keyExtractor={(item) => item.id}
+            contentContainerStyle={{ paddingBottom: 16 }}
+          />
+        ) : (
+          <Text className="text-center text-lg text-gray-600">No videos found</Text>
+        )
+      ) : kitchenHacks.length > 0 ? (
         <FlatList
-          data={videos}
-          renderItem={renderItem}
+          data={kitchenHacks}
+          renderItem={renderHackItem}
           keyExtractor={(item) => item.id}
           contentContainerStyle={{ paddingBottom: 16 }}
         />
       ) : (
-        <Text className="text-center text-lg text-gray-600">No videos found</Text>
+        <Text className="text-center text-lg text-gray-600">No kitchen hacks found</Text>
       )}
     </View>
   );

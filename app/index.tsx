@@ -1,29 +1,34 @@
 import React, { useEffect, useState } from "react";
-import { View, Text, ActivityIndicator, ScrollView, TouchableWithoutFeedback, Keyboard } from "react-native";
+import {
+  View,
+  Text,
+  ActivityIndicator,
+  ScrollView,
+  TouchableWithoutFeedback,
+  Keyboard,
+  TouchableOpacity,
+} from "react-native";
 import AsyncStorage from "@react-native-async-storage/async-storage";
-import { databases, appwriteConfig } from "../lib/appwriteConfig"; // Adjust the import path
-import CustomButtons from "@/components/CustomButtons"; // Import the custom button component
+import { databases, appwriteConfig } from "../lib/appwriteConfig";
 import ShoppingCartButton from "@/components/ShoppingCartButton";
 import VideoButton from "@/components/VideoButton";
 import CameraButton from "@/components/CameraButton";
 import { useRouter } from "expo-router";
 
 export default function Index() {
-  const [lastRecipe, setLastRecipe] = useState<any>(null);
+  const [lastRecipe, setLastRecipe] = useState(null);
   const [loading, setLoading] = useState(true);
+  const [recipes, setRecipes] = useState([]);
   const router = useRouter();
 
   useEffect(() => {
     const fetchLastRecipe = async () => {
       try {
-        // Retrieve the last recipe ID from AsyncStorage
         const lastRecipeId = await AsyncStorage.getItem("lastRecipeId");
         if (!lastRecipeId) {
           setLoading(false);
           return;
         }
-
-        // Fetch the recipe details from the database
         const response = await databases.getDocument(
           appwriteConfig.databaseId,
           appwriteConfig.recipesCollectionId,
@@ -36,67 +41,92 @@ export default function Index() {
         setLoading(false);
       }
     };
+    
+    const fetchRecipes = async () => {
+      try {
+        const response = await databases.listDocuments(
+          appwriteConfig.databaseId,
+          appwriteConfig.recipesCollectionId
+        );
+        setRecipes(response.documents.sort(() => Math.random() - 0.5));
+      } catch (error) {
+        console.error("Error fetching recipes: ", error);
+      }
+    };
 
     fetchLastRecipe();
+    fetchRecipes();
   }, []);
-
-  const handleStartCooking = () => {
-    if (lastRecipe?.$id) {
-      router.push(`/cookingInformationScreen?id=${lastRecipe.$id}`);
-    }
-  };
-
-  const handleShowIngredients = () => {
-    if (lastRecipe?.$id) {
-      router.push(`/IngredientsListScreen?id=${lastRecipe.$id}`);
-    }
-  };
 
   return (
     <TouchableWithoutFeedback onPress={Keyboard.dismiss}>
       <View className="flex-1 bg-white">
-        <Text className="font-lomedium text-4xl mt-3 ml-3">
-          Zuletzt Geöffnet:
-        </Text>
-        <ScrollView contentContainerStyle={{ flexGrow: 1 }}>
-          <View className="flex-1 items-center px-4 py-6">
-            {/* Last Recipe Section */}
-            {loading ? (
-              <ActivityIndicator size="large" color="#0000ff" />
-            ) : lastRecipe ? (
-              <View className="w-11/12 max-w-md bg-gray-200 rounded-lg p-4 mb-6">
-                <Text className="text-3xl font-bold mb-2 font-lomedium">{lastRecipe.title}</Text>
-                <View className="w-full h-40 bg-gray-300 rounded-lg mb-4" />
-                <Text className="text-gray-700 mb-4 font-lolight text-xl">{lastRecipe.description}</Text>
+        <ScrollView className="flex-1 px-4 py-6" contentContainerStyle={{ flexGrow: 1 }}>
+          <Text className="text-2xl font-bold mb-3">Jetzt weitermachen...</Text>
+          {loading ? (
+            <ActivityIndicator size="large" color="#0000ff" />
+          ) : lastRecipe ? (
+            <View className="w-full bg-gray-200 rounded-lg p-4 mb-6 shadow-md">
+              <TouchableOpacity onPress={() => router.push(`/cookingInformationScreen?id=${lastRecipe.$id}`)}>
+                <View className="w-full h-32 bg-gray-300 rounded-lg" />
+                <Text className="text-xl font-semibold mt-2">{lastRecipe.title}</Text>
+                <TouchableOpacity 
+                  className="border-spacing-3 bg-gray-300 rounded-lg p-4 shadow-sm"
+                  onPress={() => router.push(`/cookingInformationScreen?id=${lastRecipe.$id}`)}
+                  >
+                    <Text>fortsetzen</Text>
+                </TouchableOpacity>
+              </TouchableOpacity>
+            </View>
+          ) : (
+            <Text className="text-gray-600">Kein Rezept gefunden</Text>
+          )}
 
-                {/* Buttons */}
-                <View className="flex-row justify-between mt-4">
-                  <CustomButtons
-                    title="Zutaten Anzeigen"
-                    handlePress={handleShowIngredients}
-                    buttonStyle={{ flex: 1, marginRight: 8 }}
-                    textStyle={{ color: "white", fontWeight: "bold" }}
-                    disabled={false}
-                  />
-
-                  <CustomButtons
-                    title="Kochvorgang starten"
-                    handlePress={handleStartCooking}
-                    buttonStyle={{ flex: 1, marginLeft: 8 }}
-                    textStyle={{ color: "white", fontWeight: "bold" }}
-                    disabled={false}
-                  />
-                </View>
-              </View>
-            ) : (
-              <Text className="text-gray-600 text-center">Kein Rezept gefunden</Text>
-            )}
+          <View className="flex-row justify-between items-center">
+            <Text className="text-2xl font-bold mb-2">Rezeptvorschläge</Text>
+            <TouchableOpacity onPress={() => router.push(`/recipes`)}>
+              <Text>Alle anzeigen...</Text>
+            </TouchableOpacity>
           </View>
-        </ScrollView>
 
-        <ShoppingCartButton />
-        <VideoButton />
+          <ScrollView horizontal showsHorizontalScrollIndicator={false} className="-mx-2 px-2 pb-52">
+            {recipes.map((recipe) => (
+              <TouchableOpacity
+                key={recipe.$id}
+                className="mr-4 bg-gray-100 rounded-lg p-4 w-60 shadow-sm"
+                onPress={() => router.push(`/recipeDetailScreen?id=${recipe.$id}`)}
+              >
+                <View className="w-full h-24 bg-gray-300 rounded-lg" />
+                <Text className="text-lg font-semibold mt-2">{recipe.title}</Text>
+                
+                <Text className="flex-row items-center text-gray-600">
+                  ⏱️ {recipe.cook_time} min
+                </Text>
+
+                <View className="flex-row justify-between items-center mt-4">
+                  <TouchableOpacity 
+                    className="border-spacing-3 bg-gray-300 rounded-lg p-4 shadow-sm"
+                    onPress={() => router.push(`/IngredientsListScreen?id=${recipe.$id}`)}
+                    >
+                      <Text className="font-lomedium text-2xl">Zutaten</Text>
+                  </TouchableOpacity>
+
+                  <TouchableOpacity 
+                    className="border-spacing-3 bg-gray-300 rounded-lg p-4 shadow-sm"
+                    onPress={() => router.push(`/recipeDetailScreen?id=${recipe.$id}`)}
+                    >
+                      <Text className="font-lomedium text-2xl">Rezept</Text>
+                  </TouchableOpacity>
+                </View>
+              </TouchableOpacity>
+            ))}
+          </ScrollView>
+        </ScrollView>
         <CameraButton />
+        <View className="absolute bottom-4 left-0 right-0 flex-row justify-around">
+          <ShoppingCartButton />
+          <VideoButton />
+        </View>
       </View>
     </TouchableWithoutFeedback>
   );

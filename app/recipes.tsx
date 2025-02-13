@@ -1,3 +1,4 @@
+import React, { useContext, useEffect } from "react";
 import {
   View,
   Text,
@@ -5,52 +6,22 @@ import {
   TouchableOpacity,
   ActivityIndicator,
 } from "react-native";
-import React, { useEffect, useState } from "react";
-import { databases, appwriteConfig } from "../lib/appwriteConfig";
+import { DataContext } from "@/lib/DataProvider";
 import BackButton from "@/components/BackButton";
 import { useRouter, useGlobalSearchParams } from "expo-router";
 
 export default function RecipesScreen() {
-  const [recipes, setRecipes] = useState([]);
-  const [loading, setLoading] = useState(true);
-  const [allRecipes, setAllRecipes] = useState([])
+  const { recipes, allRecipes, loading, fetchRecipes, filterRecipes } =
+    useContext(DataContext);
   const router = useRouter();
   const { query } = useGlobalSearchParams(); // Get the query parameter from the URL
 
-  const fetchRecipes = async () => {
-    setLoading(true);
-    try {
-      // Fetch all recipes
-      const response = await databases.listDocuments(
-        appwriteConfig.databaseId,
-        appwriteConfig.recipesCollectionId
-      );
-  
-      let filteredRecipes = response.documents;
-  
-      // Perform local filtering for partial matches
-      if (query) {
-        const lowercaseQuery = query.toLowerCase();
-        filteredRecipes = filteredRecipes.filter((recipe) =>
-          recipe.title.toLowerCase().includes(lowercaseQuery)
-        );
-      }
-  
-      // Set both filtered and full list of recipes
-      setRecipes(filteredRecipes); // Filtered recipes shown first
-      setAllRecipes(response.documents); // Full list of recipes shown below
-    } catch (error) {
-      console.error("Failed to fetch recipes: ", error);
-    } finally {
-      setLoading(false);
-    }
-  };
-  
-  
-  
-
   useEffect(() => {
-    fetchRecipes(); // Fetch recipes whenever the component mounts or `query` changes
+    if (query) {
+      filterRecipes(query); // Filter recipes based on the query
+    } else {
+      fetchRecipes(); // Fetch all recipes if no query
+    }
   }, [query]);
 
   return (
@@ -62,12 +33,12 @@ export default function RecipesScreen() {
           {recipes.length} Filtered Results / {allRecipes.length} Total Recipes
         </Text>
       </View>
-  
+
       {/* Recipes List */}
       <ScrollView className="px-4 mt-4">
-      <Text className="font-bold text-gray-800 mt-4 text-3xl">
-        Gefundene Rezepte
-      </Text>
+        <Text className="font-bold text-gray-800 mt-4 text-3xl">
+          Gefundene Rezepte
+        </Text>
 
         {loading ? (
           <ActivityIndicator size="large" color="#0000ff" className="mt-20" />
@@ -103,12 +74,12 @@ export default function RecipesScreen() {
                 </View>
               </View>
             ))}
-  
+
             {/* Divider */}
             <Text className="font-bold text-gray-800 mt-4 text-3xl">
               Alle Rezepte
             </Text>
-  
+
             {/* All Recipes */}
             {allRecipes.map((recipe) => (
               <View
@@ -144,6 +115,4 @@ export default function RecipesScreen() {
       </ScrollView>
     </View>
   );
-  
 }
-

@@ -1,43 +1,57 @@
-import React, { useState } from 'react';
-import { View, Text, TouchableOpacity, StyleSheet } from 'react-native';
-import { router } from 'expo-router';
-import BackButton from '@/components/BackButton';
-import { Picker } from '@react-native-picker/picker';
+import React, { useState } from "react";
+import { View, Text, TouchableOpacity, StyleSheet, Animated } from "react-native";
+import { router } from "expo-router";
+import BackButton from "@/components/BackButton";
+import { Picker } from "@react-native-picker/picker";
+import { useEffect } from "react";
 
-const TimerScreen = () => {
-  const [hours, setHours] = useState('0'); // Store hours as a string
-  const [minutes, setMinutes] = useState('0'); // Store minutes as a string
+type TimerScreenProps = {
+  onSaveTimer: (duration: number) => void;
+};
+
+const TimerScreen = ({ onSaveTimer }: TimerScreenProps) => {
+  const [hours, setHours] = useState("0");
+  const [minutes, setMinutes] = useState("0");
+  const [fadeAnim] = useState(new Animated.Value(0)); // For fade-in animation
+
+  useEffect(() => {
+    Animated.timing(fadeAnim, {
+      toValue: 1,
+      duration: 500,
+      useNativeDriver: true,
+    }).start();
+  }, [fadeAnim]);
 
   const handleSetTimer = () => {
     const totalSeconds = parseInt(hours, 10) * 3600 + parseInt(minutes, 10) * 60;
     if (totalSeconds > 0) {
-      console.log(`Timer set for ${totalSeconds} seconds`);
+      onSaveTimer(totalSeconds); // Pass the timer duration back to the parent
       router.back();
     }
   };
 
   const handleCancelTimer = () => {
-    setHours('0');
-    setMinutes('0');
+    setHours("0");
+    setMinutes("0");
     router.back();
   };
 
   return (
-    <View style={styles.container}>
+    <Animated.View style={[styles.container, { opacity: fadeAnim }]}>
       {/* Back Button */}
       <BackButton />
 
       {/* Title */}
-      <Text style={styles.title}>Set Timer Duration:</Text>
+      <Text style={styles.title}>Setze die Kochzeit</Text>
 
-      {/* Selected Time Display */}
-      <View style={styles.selectedTimeContainer}>
-        <Text style={styles.selectedTimeText}>
-          {`${hours.padStart(2, '0')}:${minutes.padStart(2, '0')}`}
+      {/* Time Display */}
+      <View style={styles.timeDisplay}>
+        <Text style={styles.timeText}>
+          {`${hours.padStart(2, "0")}:${minutes.padStart(2, "0")}`}
         </Text>
       </View>
 
-      {/* Pickers Container */}
+      {/* Pickers */}
       <View style={styles.pickersContainer}>
         {/* Hours Picker */}
         <Picker
@@ -62,19 +76,16 @@ const TimerScreen = () => {
         </Picker>
       </View>
 
-      {/* Buttons Container */}
+      {/* Action Buttons */}
       <View style={styles.buttonsContainer}>
-        {/* Set Timer Button */}
-        <TouchableOpacity style={styles.button} onPress={handleSetTimer}>
-          <Text style={styles.buttonText}>Set Timer</Text>
+        <TouchableOpacity style={styles.buttonPrimary} onPress={handleSetTimer}>
+          <Text style={styles.buttonText}>Timer starten</Text>
         </TouchableOpacity>
-
-        {/* Cancel Timer Button */}
-        <TouchableOpacity style={styles.button} onPress={handleCancelTimer}>
-          <Text style={styles.buttonText}>Cancel Timer</Text>
+        <TouchableOpacity style={styles.buttonSecondary} onPress={handleCancelTimer}>
+          <Text style={styles.buttonText}>Abbrechen</Text>
         </TouchableOpacity>
       </View>
-    </View>
+    </Animated.View>
   );
 };
 
@@ -82,48 +93,60 @@ const TimerScreen = () => {
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    justifyContent: 'center',
-    alignItems: 'center',
-    backgroundColor: '#fff',
+    backgroundColor: "#f9f9f9",
     padding: 20,
+    justifyContent: "center",
   },
   title: {
-    fontSize: 24,
-    marginBottom: 20,
-  },
-  selectedTimeContainer: {
-    marginBottom: 20, // Add space below the selected time display
-  },
-  selectedTimeText: {
     fontSize: 28,
-    fontWeight: 'bold',
-    color: '#333',
+    fontWeight: "bold",
+    textAlign: "center",
+    marginBottom: 20,
+    color: "#333",
+  },
+  timeDisplay: {
+    alignItems: "center",
+    marginBottom: 30,
+  },
+  timeText: {
+    fontSize: 48,
+    fontWeight: "bold",
+    color: "#ff6f61",
   },
   pickersContainer: {
-    flexDirection: 'row', // Place pickers side by side
-    alignItems: 'center',
-    marginBottom: 30, // Add space below the pickers
+    flexDirection: "row",
+    justifyContent: "space-around",
+    marginBottom: 30,
   },
   picker: {
-    height: 50,
-    width: 100,
-    marginHorizontal: 10, // Add horizontal spacing between pickers
+    width: 120,
+    height: 150,
+    backgroundColor: "#fff",
+    borderRadius: 10,
+    overflow: "hidden",
   },
   buttonsContainer: {
-    flexDirection: 'column', // Stack buttons vertically
-    alignItems: 'center', // Center buttons horizontally
+    flexDirection: "column",
+    alignItems: "center",
   },
-  button: {
-    backgroundColor: '#4CAF50', // Green for Set Timer
-    padding: 15,
-    borderRadius: 8,
-    marginBottom: 10, // Add vertical spacing between buttons
-    width: '80%', // Make buttons take up 80% of the screen width
-    alignItems: 'center',
+  buttonPrimary: {
+    backgroundColor: "#ff6f61",
+    paddingVertical: 15,
+    paddingHorizontal: 30,
+    borderRadius: 25,
+    marginBottom: 15,
+  },
+  buttonSecondary: {
+    backgroundColor: "#ccc",
+    paddingVertical: 15,
+    paddingHorizontal: 30,
+    borderRadius: 25,
   },
   buttonText: {
-    color: '#fff',
-    fontSize: 16,
+    fontSize: 18,
+    fontWeight: "bold",
+    color: "#fff",
+    textAlign: "center",
   },
 });
 

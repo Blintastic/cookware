@@ -18,7 +18,7 @@ interface AddIngredientModalProps {
   onClose: () => void;
 }
 
-const units = ["Kg.", "L.", "Stk."];
+const units = ["Kg", "L", "Stk."];
 
 export default function AddIngredientModal({ isVisible, onClose }: AddIngredientModalProps) {
   const [searchTerm, setSearchTerm] = useState("");
@@ -66,6 +66,12 @@ export default function AddIngredientModal({ isVisible, onClose }: AddIngredient
   const handleAdd = () => {
     if (selectedIngredient) {
       addToOpenList(selectedIngredient, `${quantity} ${unit}`);
+      onClose();
+      return;
+    }
+
+    if (searchTerm.trim()) {
+      addToOpenList(searchTerm, `${quantity} ${unit}`);
       onClose();
     }
   };

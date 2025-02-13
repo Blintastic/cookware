@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from "react";
+import React, { useState, useEffect, useRef } from "react";
 import {
   ViroARScene,
   ViroARSceneNavigator,
@@ -9,14 +9,13 @@ import { Image, View, Text, TouchableOpacity } from "react-native";
 import { router } from "expo-router";
 import { databases, appwriteConfig } from "../lib/appwriteConfig";
 
-// Define types for icons and tracking targets
 type Icon = {
   name: string;
   source: string;
   physicalWidth: number;
-  videos: string; // Single video ID string
-  recipes: string; // Recipe ID string
-  icon_type: "video" | "recipe" | "timer"; // Enum for icon type
+  videos: string;
+  recipes: string;
+  icon_type: "video" | "recipe" | "timer";
 };
 
 type TrackingTarget = {
@@ -29,6 +28,7 @@ const CameraScreen = () => {
   const [iconsArray, setIconsArray] = useState<Icon[]>([]);
   const [loading, setLoading] = useState(true);
   const [arNavigator, setArNavigator] = useState(true);
+  const arNavigatorRef = useRef<any>(null);
 
   useEffect(() => {
     const fetchIcons = async () => {
@@ -42,7 +42,6 @@ const CameraScreen = () => {
           let videoId = "";
           let recipeId = "";
 
-          // Extract video ID
           if (Array.isArray(icon.videos) && icon.videos.length > 0) {
             videoId = icon.videos[0]?.$id || "";
           } else if (typeof icon.videos === "object" && icon.videos?.$id) {
@@ -51,7 +50,6 @@ const CameraScreen = () => {
             videoId = icon.videos;
           }
 
-          // Extract recipe ID
           if (typeof icon.recipes === "object" && icon.recipes?.$id) {
             recipeId = icon.recipes.$id;
           } else if (typeof icon.recipes === "string") {
@@ -63,8 +61,8 @@ const CameraScreen = () => {
             source: icon.image,
             physicalWidth: 0.1,
             videos: videoId,
-            recipes: recipeId, // Only the recipe ID is stored here
-            icon_type: icon.icon_type || "video", // Default to "video"
+            recipes: recipeId,
+            icon_type: icon.icon_type || "video",
           };
         });
 
@@ -77,6 +75,14 @@ const CameraScreen = () => {
     };
 
     fetchIcons();
+
+    return () => {
+      if (arNavigatorRef.current) {
+        arNavigatorRef.current.reset();
+        arNavigatorRef.current = null;
+      }
+      setArNavigator(false);
+    };
   }, []);
 
   useEffect(() => {
@@ -157,6 +163,7 @@ const CameraScreen = () => {
       ) : (
         arNavigator && (
           <ViroARSceneNavigator
+            ref={arNavigatorRef}
             autofocus={true}
             initialScene={{ scene: ARScene }}
             className="flex-1"

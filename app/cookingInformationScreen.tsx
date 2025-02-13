@@ -6,6 +6,9 @@ import { databases, appwriteConfig } from "../lib/appwriteConfig";
 import CameraButton from "@/components/CameraButton";
 import VideoOVerviewButton from "@/components/VideoOverviewButton";
 import TimerButton from "@/components/TimerButton";
+import { Ionicons } from "@expo/vector-icons";
+import { useShoppingList } from "./manager/ShoppingListContext";
+import Toast from 'react-native-toast-message';
 
 type SearchParams = {
   id?: string;
@@ -17,6 +20,7 @@ export default function CookingInformationScreen() {
   const [loading, setLoading] = useState(true);
   const [showIngredients, setShowIngredients] = useState(false);
   const router = useRouter();
+  const { addToOpenList } = useShoppingList();
 
   useEffect(() => {
     const fetchRecipe = async () => {
@@ -60,6 +64,17 @@ export default function CookingInformationScreen() {
     );
   }
 
+  const handleAddToShoppingList = (ingredient: string) => {
+    addToOpenList(ingredient, "1 Stk."); // Default quantity
+    Toast.show({
+      type: "success",
+      text1: `${ingredient} wurde zur Einkaufsliste hinzugefügt`,
+      position: "bottom",
+      visibilityTime: 2000,
+      autoHide: true,
+    });
+  };
+
   return (
     <View className="flex-1">
       <ScrollView className="flex-1 bg-white">
@@ -86,7 +101,15 @@ export default function CookingInformationScreen() {
           {showIngredients ? (
             <View>
               {recipe.ingredients?.map((ingredient: string, index: number) => (
-                <Text key={index} className="text-gray-800">- {ingredient}</Text>
+                <View key={index} className="flex-row justify-between items-center mb-2">
+                  <Text className="text-gray-800">- {ingredient}</Text>
+                  <TouchableOpacity
+                    onPress={() => handleAddToShoppingList(ingredient)}
+                    className="ml-4"
+                  >
+                    <Ionicons name="cart-outline" size={24} color="green" />
+                  </TouchableOpacity>
+                </View>
               ))}
             </View>
           ) : (
@@ -96,7 +119,7 @@ export default function CookingInformationScreen() {
       </ScrollView>
 
       <CameraButton />
-      <VideoOVerviewButton id={id}/>
+      <VideoOVerviewButton id={id} />
       <TimerButton />
     </View>
   );
