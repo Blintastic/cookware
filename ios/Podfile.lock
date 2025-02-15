@@ -10,8 +10,6 @@ PODS:
     - ExpoModulesCore
   - ExpoAsset (11.0.1):
     - ExpoModulesCore
-  - ExpoBlur (14.0.1):
-    - ExpoModulesCore
   - ExpoCamera (16.0.5):
     - ExpoModulesCore
     - ZXingObjC/OneD
@@ -1979,7 +1977,6 @@ DEPENDENCIES:
   - EXConstants (from `../node_modules/expo-constants/ios`)
   - Expo (from `../node_modules/expo`)
   - ExpoAsset (from `../node_modules/expo-asset/ios`)
-  - ExpoBlur (from `../node_modules/expo-blur/ios`)
   - ExpoCamera (from `../node_modules/expo-camera/ios`)
   - ExpoFileSystem (from `../node_modules/expo-file-system/ios`)
   - ExpoFont (from `../node_modules/expo-font/ios`)
@@ -2088,8 +2085,6 @@ EXTERNAL SOURCES:
     :path: "../node_modules/expo"
   ExpoAsset:
     :path: "../node_modules/expo-asset/ios"
-  ExpoBlur:
-    :path: "../node_modules/expo-blur/ios"
   ExpoCamera:
     :path: "../node_modules/expo-camera/ios"
   ExpoFileSystem:
@@ -2273,7 +2268,6 @@ SPEC CHECKSUMS:
   EXConstants: 277129d9a42ba2cf1fad375e7eaa9939005c60be
   Expo: 0036dbc379382e2e039898c944ab01dba3a1abb5
   ExpoAsset: 6f7a8887cbb9fb39fdb0808e7f6f74ba0e1ae9b6
-  ExpoBlur: 2b92367da8158eeaee9bfa940d82512a09c8e0c6
   ExpoCamera: 48b93ce5a1f2d7c52725635cb10bb38f8f44b5ba
   ExpoFileSystem: 7265de9e7b7050c494f92332110818381f832606
   ExpoFont: 12b0217e42ac97029d0f317f0486039a8508cf52

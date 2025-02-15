@@ -6,7 +6,7 @@ import {
   ViroARImageMarker,
 } from "@viro-community/react-viro";
 import { Image, View, Text, TouchableOpacity } from "react-native";
-import { router } from "expo-router";
+import { router, useLocalSearchParams } from "expo-router";
 import { databases, appwriteConfig } from "../lib/appwriteConfig";
 
 type Icon = {
@@ -29,6 +29,9 @@ const CameraScreen = () => {
   const [loading, setLoading] = useState(true);
   const [arNavigator, setArNavigator] = useState(true);
   const arNavigatorRef = useRef<any>(null);
+
+  // Extract the key from route params to force remounting
+  const { key } = useLocalSearchParams<{ key: string }>();
 
   useEffect(() => {
     const fetchIcons = async () => {
@@ -77,13 +80,20 @@ const CameraScreen = () => {
     fetchIcons();
 
     return () => {
+      // Cleanup: Reset AR session and delete all tracking targets
       if (arNavigatorRef.current) {
         arNavigatorRef.current.reset();
         arNavigatorRef.current = null;
       }
+
+      // Delete all tracking targets individually
+      iconsArray.forEach((icon) => {
+        ViroARTrackingTargets.deleteTarget(icon.name);
+      });
+
       setArNavigator(false);
     };
-  }, []);
+  }, [key]); // Add key as a dependency to force remounting
 
   useEffect(() => {
     if (iconsArray.length > 0) {
@@ -153,9 +163,12 @@ const CameraScreen = () => {
 
   return (
     <View className="flex-1 relative">
+      {/* Back Button */}
       <TouchableOpacity onPress={() => router.push("/")} className="flex-row items-center">
         <Text className="text-lg font-semibold text-black">← Zurück</Text>
       </TouchableOpacity>
+
+      {/* Loading State */}
       {loading ? (
         <View className="flex-1 justify-center items-center">
           <Text className="text-white">Loading icons...</Text>
@@ -170,6 +183,8 @@ const CameraScreen = () => {
           />
         )
       )}
+
+      {/* Scanning Overlay */}
       <Image
         source={require("../images/ScanningOverlay.png")}
         className="absolute inset-0"
