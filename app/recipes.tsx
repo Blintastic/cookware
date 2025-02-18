@@ -56,7 +56,7 @@ export default function RecipesScreen() {
                 <View className="w-full h-40 bg-gray-300 rounded-lg mb-2"></View>
                 <View className="flex-row items-center justify-between mt-2">
                   <Text className="flex-row items-center text-gray-600">
-                    ⏱️ {recipe.prep_time} min
+                    ⏱️ {Number(recipe.prep_time) + Number(recipe.cook_time)} min
                   </Text>
                 </View>
                 <View className="flex-row justify-between mt-4">

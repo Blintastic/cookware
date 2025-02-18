@@ -87,10 +87,11 @@ const CameraScreen = () => {
       }
 
       // Delete all tracking targets individually
-      iconsArray.forEach((icon) => {
-        ViroARTrackingTargets.deleteTarget(icon.name);
-      });
-
+      if (iconsArray.length > 0) {
+        iconsArray.forEach((icon) => {
+          ViroARTrackingTargets.deleteTarget(icon.name);
+        });
+      }
       setArNavigator(false);
     };
   }, [key]); // Add key as a dependency to force remounting

@@ -1,12 +1,27 @@
 // lib/DataContext.js
 import React, { createContext, useState, useEffect } from "react";
 import { databases, appwriteConfig } from "./appwriteConfig";
+import { Audio } from "expo-av";
 
-export const DataContext = createContext();
+// Define a default value for the context
+const defaultContextValue = {
+  recipes: [],
+  allRecipes: [],
+  videos: [],
+  kitchenHacks: [],
+  loading: true,
+  fetchRecipes: () => {},
+  filterRecipes: () => {},
+  fetchVideosAndHacks: () => {},
+};
+
+export const DataContext = createContext(defaultContextValue);
 
 export const DataProvider = ({ children }) => {
   const [recipes, setRecipes] = useState([]);
   const [allRecipes, setAllRecipes] = useState([]);
+  const [videos, setVideos] = useState([]);
+  const [kitchenHacks, setKitchenHacks] = useState([]);
   const [loading, setLoading] = useState(true);
 
   const fetchRecipes = async () => {
@@ -25,11 +40,59 @@ export const DataProvider = ({ children }) => {
     }
   };
 
-  useEffect(() => {
-    if (allRecipes.length === 0) {
-      fetchRecipes();
+  const fetchVideosAndHacks = async () => {
+    setLoading(true);
+    try {
+      // Fetch all videos
+      const videoResponse = await databases.listDocuments(
+        appwriteConfig.databaseId,
+        appwriteConfig.videosCollectionId
+      );
+      const videoDetails = videoResponse.documents.map((video) => ({
+        id: video.$id,
+        title: video.title,
+        thumbnail: video.thumbnail,
+        videoUrl: video.video,
+      }));
+
+      const videosWithDuration = await Promise.all(
+        videoDetails.map(async (video) => {
+          const duration = await getVideoDuration(video.videoUrl);
+          return { ...video, duration };
+        })
+      );
+
+      setVideos(videosWithDuration);
+
+      // Fetch all kitchen hacks
+      const kitchenHacksResponse = await databases.listDocuments(
+        appwriteConfig.databaseId,
+        appwriteConfig.kitchenHacksCollectionId
+      );
+      const kitchenHacksDetails = kitchenHacksResponse.documents.map((hack) => ({
+        id: hack.$id,
+        title: hack.title,
+        content: hack.content,
+      }));
+      setKitchenHacks(kitchenHacksDetails);
+    } catch (error) {
+      console.error("Error fetching data:", error);
+    } finally {
+      setLoading(false);
     }
-  }, []);
+  };
+
+  const getVideoDuration = async (videoUrl) => {
+    try {
+      const { sound } = await Audio.Sound.createAsync({ uri: videoUrl });
+      const status = await sound.getStatusAsync();
+      await sound.unloadAsync();
+      return status.durationMillis;
+    } catch (error) {
+      console.error("Error fetching video duration:", error);
+      return null;
+    }
+  };
 
   const filterRecipes = (query) => {
     if (!query) {
@@ -43,9 +106,27 @@ export const DataProvider = ({ children }) => {
     setRecipes(filtered);
   };
 
+  useEffect(() => {
+    if (allRecipes.length === 0) {
+      fetchRecipes();
+    }
+    if (videos.length === 0 || kitchenHacks.length === 0) {
+      fetchVideosAndHacks();
+    }
+  }, []);
+
   return (
     <DataContext.Provider
-      value={{ recipes, allRecipes, loading, fetchRecipes, filterRecipes }}
+      value={{
+        recipes,
+        allRecipes,
+        videos,
+        kitchenHacks,
+        loading,
+        fetchRecipes,
+        filterRecipes,
+        fetchVideosAndHacks,
+      }}
     >
       {children}
     </DataContext.Provider>

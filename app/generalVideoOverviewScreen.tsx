@@ -1,74 +1,20 @@
-import React, { useEffect, useState } from "react";
+import React, { useContext, useState, useEffect} from "react";
 import { View, Text, ActivityIndicator, FlatList, TouchableOpacity, Image } from "react-native";
-import { databases, appwriteConfig } from "../lib/appwriteConfig";
 import { useRouter } from "expo-router";
 import BackButton from "@/components/BackButton";
-import { Audio } from "expo-av"; // Import expo-av for video metadata
-import Icon from "react-native-vector-icons/MaterialIcons"; // Import MaterialIcons for icons
+import Icon from "react-native-vector-icons/MaterialIcons"; 
+import { DataContext } from "@/lib/DataProvider";
 
 const GeneralVideoOverviewScreen = () => {
-  const [videos, setVideos] = useState([]);
-  const [kitchenHacks, setKitchenHacks] = useState([]);
-  const [loading, setLoading] = useState(true);
+  const { videos, kitchenHacks, loading, fetchVideosAndHacks } = useContext(DataContext);
   const [activeTab, setActiveTab] = useState("videos"); // State to manage active tab
   const router = useRouter();
 
   useEffect(() => {
-    const fetchData = async () => {
-      try {
-        // Fetch all videos
-        const videoResponse = await databases.listDocuments(
-          appwriteConfig.databaseId,
-          appwriteConfig.videosCollectionId
-        );
-        const videoDetails = videoResponse.documents.map((video) => ({
-          id: video.$id,
-          title: video.title,
-          thumbnail: video.thumbnail,
-          videoUrl: video.video,
-        }));
-
-        const videosWithDuration = await Promise.all(
-          videoDetails.map(async (video) => {
-            const duration = await getVideoDuration(video.videoUrl);
-            return { ...video, duration };
-          })
-        );
-
-        setVideos(videosWithDuration);
-
-        // Fetch all kitchen hacks
-        const kitchenHacksResponse = await databases.listDocuments(
-          appwriteConfig.databaseId,
-          appwriteConfig.kitchenHacksCollectionId
-        );
-        const kitchenHacksDetails = kitchenHacksResponse.documents.map((hack) => ({
-          id: hack.$id,
-          title: hack.title,
-          content: hack.content,
-        }));
-        setKitchenHacks(kitchenHacksDetails);
-      } catch (error) {
-        console.error("Error fetching data:", error);
-      } finally {
-        setLoading(false);
-      }
-    };
-
-    fetchData();
-  }, []);
-
-  const getVideoDuration = async (videoUrl) => {
-    try {
-      const { sound } = await Audio.Sound.createAsync({ uri: videoUrl });
-      const status = await sound.getStatusAsync();
-      await sound.unloadAsync();
-      return status.durationMillis;
-    } catch (error) {
-      console.error("Error fetching video duration:", error);
-      return null;
+    if (!videos || !kitchenHacks) {
+      fetchVideosAndHacks();
     }
-  };
+  }, []);
 
   const formatDuration = (durationMillis) => {
     if (!durationMillis) return "00:00";
