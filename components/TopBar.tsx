@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import { View, SafeAreaView, TouchableOpacity, Text } from 'react-native';
+import { View, SafeAreaView, TouchableOpacity, Image, Text } from 'react-native';
 import SearchBar from './SearchBar';
 import HamburgerMenu from './HamburgerMenu'; // Import the HamburgerMenu
 
@@ -12,19 +12,29 @@ const HomescreenBar = () => {
 
   return (
     <SafeAreaView className="bg-white">
-      <View className="flex-row items-center justify-between px-4 py-2 border-b border-black relative">
-        {/* Placeholder for logo or other content */}
-        <View className="w-10 h-10 bg-gray-300 rounded-md" />
+      <View className="flex-row items-center justify-between px-4 py-2 relative">
+        <View className="absolute top-0 ml-6">
+          <Image
+            source={require("../assets/ui/logo.png")}
+            style={{ width: 50, height: 44 }}          
+          />
+        </View>
 
-        {/* SearchBar */}
+        {/* Centered HOME text PLACEHOLDER*/}
+        <Text className="font-lobold text-xl absolute top-2 left-1/2 -translate-x-1/2">
+          HOME
+        </Text>
+
         <SearchBar />
 
-        {/* Hamburger Menu Button */}
         <TouchableOpacity 
-          style={{ position: 'absolute', right: 16, top: 16 }} 
+          style={{ position: 'absolute', right: 29, top: 14 }} 
           onPress={toggleMenu}
         >
-          <Text style={{ fontSize: 24 }}>☰</Text>
+          <Image
+            source={require("../assets/ui/Hamburger_menu.png")} 
+            style={{ width: 21, height: 16 }}         
+          />
         </TouchableOpacity>
       </View>
 

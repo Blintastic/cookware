@@ -1,5 +1,5 @@
 import React, { useState } from "react";
-import { View, TextInput, TouchableOpacity, Text, Keyboard } from "react-native";
+import { View, TextInput, TouchableOpacity, Image} from "react-native";
 import { router } from "expo-router";
 
 const SearchBar = () => {
@@ -14,18 +14,21 @@ const SearchBar = () => {
   };
 
   return (
-    <View className="flex-1 flex-row items-center border border-black rounded-full px-3 mx-3 h-10 mr-8">
+    <View className="flex-1 flex-row items-center px-3 mx-2 h-14 bg-gray-100 rounded-2xl mt-12">
       <TextInput
         value={searchQuery}
         onChangeText={setSearchQuery}
-        placeholder="Search for recipes..."
+        placeholder="Rezepte suchen"
         placeholderTextColor="gray"
         returnKeyType="search" // Changes the keyboard action button to "Search"
         onSubmitEditing={handleSearchSubmit} // Trigger navigation on Enter/Submit
-        className="flex-1 text-black text-base"
+        className="flex-1 text-gray-300 text-lg font-lolight mb-1"
       />
       <TouchableOpacity onPress={handleSearchSubmit}>
-        <Text className="text-black text-base">🔍</Text>
+        <Image
+          source={require("../assets/ui/search-icon-2-614x460.png")}
+          style={{width: 40, height:40}}
+        />
       </TouchableOpacity>
     </View>
   );
