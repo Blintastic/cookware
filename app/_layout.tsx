@@ -3,6 +3,7 @@ import { SplashScreen, Stack } from 'expo-router';
 import HomescreenBar from '@/components/TopBar'; // Import the HomescreenBar
 import { useFonts } from 'expo-font';
 import Toast from 'react-native-toast-message';
+import { StatusBar } from 'react-native';
 
 import { ShoppingListProvider } from './manager/ShoppingListContext';
 import { DataProvider } from '../lib/DataProvider';
@@ -53,6 +54,8 @@ const RootLayout = () => {
         </ShoppingListProvider>   
       </DataProvider>
       <Toast />
+
+      <StatusBar backgroundColor="black" />
     </>
   );
 };

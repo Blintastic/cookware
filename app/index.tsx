@@ -62,19 +62,18 @@ export default function Index() {
     <TouchableWithoutFeedback onPress={Keyboard.dismiss}>
       <View className="flex-1 bg-white">
         <ScrollView className="flex-1 px-4 py-6" contentContainerStyle={{ flexGrow: 1 }}>
-          <Text className="text-2xl font-bold mb-3">Jetzt weitermachen...</Text>
           {loading ? (
             <ActivityIndicator size="large" color="#0000ff" />
           ) : lastRecipe ? (
-            <View className="w-full bg-gray-200 rounded-lg p-4 mb-6 shadow-md">
+            <View className="w-full bg-gray-200 rounded-2xl p-4 mb-6">
               <TouchableOpacity onPress={() => router.push(`/cookingInformationScreen?id=${lastRecipe.$id}`)}>
-                <View className="w-full h-32 bg-gray-300 rounded-lg" />
-                <Text className="text-xl font-semibold mt-2">{lastRecipe.title}</Text>
+                <Text className="font-lolight text-lg">jetzt weitermachen</Text>
+                <Text className="text-3xl font-lomedium">{lastRecipe.title}</Text>
                 <TouchableOpacity 
-                  className="border-spacing-3 bg-gray-300 rounded-lg p-4 shadow-sm"
+                  className="bg-green-900 p-2 mx-24 shadow-sm rounded-3xl items-center right-24 mt-3"
                   onPress={() => router.push(`/cookingInformationScreen?id=${lastRecipe.$id}`)}
                   >
-                    <Text>fortsetzen</Text>
+                    <Text className="text-white font-lolight text-xl text-center">Fortsetzen</Text>
                 </TouchableOpacity>
               </TouchableOpacity>
             </View>
@@ -83,7 +82,7 @@ export default function Index() {
           )}
 
           <View className="flex-row justify-between items-center">
-            <Text className="text-2xl font-bold mb-2">Rezeptvorschläge</Text>
+            <Text className="text-xl font-bold mb-2">Vorschläge für dich</Text>
             <TouchableOpacity onPress={() => router.push(`/recipes`)}>
               <Text>Alle anzeigen...</Text>
             </TouchableOpacity>
