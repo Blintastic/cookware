@@ -1,12 +1,11 @@
-import React, { useEffect } from 'react';
-import { SplashScreen, Stack } from 'expo-router';
-import HomescreenBar from '@/components/TopBar'; // Import the HomescreenBar
-import { useFonts } from 'expo-font';
-import Toast from 'react-native-toast-message';
-import { StatusBar } from 'react-native';
-
-import { ShoppingListProvider } from './manager/ShoppingListContext';
-import { DataProvider } from '../lib/DataProvider';
+import React, { useEffect } from "react";
+import { SplashScreen, Stack } from "expo-router";
+import HomescreenBar from "@/components/TopBar"; // Import the HomescreenBar
+import { useFonts } from "expo-font";
+import Toast from "react-native-toast-message";
+import { StatusBar, View } from "react-native"; // Import View
+import { ShoppingListProvider } from "./manager/ShoppingListContext";
+import { DataProvider } from "../lib/DataProvider";
 
 SplashScreen.preventAutoHideAsync();
 
@@ -33,30 +32,29 @@ const RootLayout = () => {
   if (!fontsLoaded && !error) return null;
 
   return (
-    <>
+    <View className="flex-1 bg-[#FFEFE6]">
       <HomescreenBar />
       <DataProvider>
         <ShoppingListProvider>
-          <Stack screenOptions={{headerShown: false}}>
-              <Stack.Screen name="index" />
-              <Stack.Screen name="cookingVideoScreen" />
-              <Stack.Screen name="recipes" />
-              <Stack.Screen name="shoppingListScreen"  />
-              <Stack.Screen name="cameraScreen" options={{ gestureEnabled: true }} /> 
-              <Stack.Screen name="recipeDetailScreen" />
-              <Stack.Screen name="IngredientsListScreen" />
-              <Stack.Screen name="cookingInformationScreen" />
-              <Stack.Screen name="generalVideoOverviewScreen" />
-              <Stack.Screen name="manager/videoManager" />
-              <Stack.Screen name="timerScreen" />
-              <Stack.Screen name="videoOverviewScreen" />
-            </Stack>
-        </ShoppingListProvider>   
+          <Stack screenOptions={{ headerShown: false }}>
+            <Stack.Screen name="index" />
+            <Stack.Screen name="cookingVideoScreen" />
+            <Stack.Screen name="recipes" />
+            <Stack.Screen name="shoppingListScreen" />
+            <Stack.Screen name="cameraScreen" options={{ gestureEnabled: true }} />
+            <Stack.Screen name="recipeDetailScreen" />
+            <Stack.Screen name="IngredientsListScreen" />
+            <Stack.Screen name="cookingInformationScreen" />
+            <Stack.Screen name="generalVideoOverviewScreen" />
+            <Stack.Screen name="manager/videoManager" />
+            <Stack.Screen name="timerScreen" />
+            <Stack.Screen name="videoOverviewScreen" />
+          </Stack>
+        </ShoppingListProvider>
       </DataProvider>
       <Toast />
-
       <StatusBar backgroundColor="black" />
-    </>
+    </View>
   );
 };
 

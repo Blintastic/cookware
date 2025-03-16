@@ -9,6 +9,7 @@ import TimerButton from "@/components/TimerButton";
 import { Ionicons } from "@expo/vector-icons";
 import { useShoppingList } from "./manager/ShoppingListContext";
 import Toast from 'react-native-toast-message';
+import BottomBar from "@/components/BottomBar";
 
 type SearchParams = {
   id?: string;
@@ -117,6 +118,8 @@ export default function CookingInformationScreen() {
           )}
         </View>
       </ScrollView>
+          
+      <BottomBar/>
 
       <CameraButton />
       <VideoOVerviewButton id={id} />

@@ -1,5 +1,5 @@
 import React from "react";
-import { TouchableOpacity, Text } from "react-native";
+import { TouchableOpacity, Image } from "react-native";
 import { router } from "expo-router";
 
 type VideoOverviewButtonProps = {
@@ -9,7 +9,7 @@ type VideoOverviewButtonProps = {
 export default function VideoOverviewButton({ id }: VideoOverviewButtonProps) {
   return (
     <TouchableOpacity
-      className="absolute bottom-8 bg-gray-300 rounded-full p-6 z-10 ml-12"
+      className="absolute bottom-4 p-6 z-10 ml-9"
       onPress={() => {
         if (!id) {
           console.error("No recipe ID provided to VideoOverviewButton");
@@ -18,7 +18,10 @@ export default function VideoOverviewButton({ id }: VideoOverviewButtonProps) {
         router.push({ pathname: "/videoOverviewScreen", params: { id } });
       }}
     >
-      <Text className="text-gray-600 text-2xl">🎥</Text>
+      <Image
+        source={require("../assets/ui/VideoOverviewButton.png")}
+        style={{height: 40, width:40}}
+      />
     </TouchableOpacity>
   );
 }

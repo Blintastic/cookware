@@ -1,5 +1,5 @@
 import React, { useState } from "react";
-import { TouchableOpacity, Text } from "react-native";
+import { TouchableOpacity, Image } from "react-native";
 import { router } from "expo-router";
 
 export default function TimerButton() {
@@ -17,12 +17,13 @@ export default function TimerButton() {
 
   return (
     <TouchableOpacity
-      className="absolute bottom-8 bg-gray-300 rounded-full p-6 z-10 ml-2 right-12"
+      className="absolute bottom-4 rounded-full p-6 z-10 right-7"
       onPress={handlePress}
     >
-      <Text className="text-gray-600 text-2xl">
-        {timerActive ? "⏳" : "⏲️"}
-      </Text>
+      <Image
+        source={require("../assets/ui/TimerButton.png")}
+        style={{height: 40, width:40}}
+      />
     </TouchableOpacity>
   );
 }

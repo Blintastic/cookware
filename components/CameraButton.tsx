@@ -1,14 +1,17 @@
 import React from "react";
-import { TouchableOpacity, Text } from "react-native";
+import { TouchableOpacity, Image } from "react-native";
 import { router } from "expo-router";
 
 export default function CameraButton() {
   return (
     <TouchableOpacity 
-      className="absolute bottom-8 self-center bg-gray-300 rounded-full p-10 z-10"
+      className="absolute bottom-14 self-center bg-green-800 rounded-full p-5 z-10"
       onPress={() => router.replace(`/cameraScreen?key=${Date.now()}`)} // Add a unique key
     >
-      <Text className="text-gray-600 text-2xl">📷</Text>
+      <Image
+        source={require("../assets/ui/CameraButton.png")}
+        style={{height: 50, width: 50}}
+      />
     </TouchableOpacity>
   );
 }
