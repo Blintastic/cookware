@@ -13,7 +13,7 @@ const BottomBar = () => {
       alignItems: 'center',  // Centers the image
     }}>
       <Image
-        style={{ height: 150, width: 400 }}
+        style={{ height: 150, width: 405 }}
         source={require("../assets/ui/BottomBar.png")}
       />
     </View>

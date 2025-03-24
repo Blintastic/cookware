@@ -118,7 +118,7 @@ export default function Index() {
                   </TouchableOpacity>
                   <TouchableOpacity 
                     className="bg-gray-300 px-3 py-2 rounded-full mt-2"
-                    onPress={() => router.push(`/recipeDetailScreen?id=${recipe.$id}`)}
+                    onPress={() => router.push(`/IngredientsListScreen?id=${recipe.$id}`)}
                   >
                       <Text className="text-black text-center font-lolight text-xl">Zutaten</Text>
                   </TouchableOpacity>

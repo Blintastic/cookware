@@ -1,13 +1,13 @@
-import React, { useContext, useState, useEffect} from "react";
+import React, { useContext, useState, useEffect } from "react";
 import { View, Text, ActivityIndicator, FlatList, TouchableOpacity, Image } from "react-native";
 import { useRouter } from "expo-router";
 import BackButton from "@/components/BackButton";
-import Icon from "react-native-vector-icons/MaterialIcons"; 
+import Icon from "react-native-vector-icons/MaterialIcons";
 import { DataContext } from "@/lib/DataProvider";
 
 const GeneralVideoOverviewScreen = () => {
   const { videos, kitchenHacks, loading, fetchVideosAndHacks } = useContext(DataContext);
-  const [activeTab, setActiveTab] = useState("videos"); // State to manage active tab
+  const [activeTab, setActiveTab] = useState("videos");
   const router = useRouter();
 
   useEffect(() => {
@@ -25,13 +25,13 @@ const GeneralVideoOverviewScreen = () => {
 
   const renderVideoItem = ({ item }) => (
     <TouchableOpacity
-      className="mb-4 bg-white rounded-lg shadow-md overflow-hidden"
+      className="flex-row items-center bg-white rounded-xl shadow-md p-4 mb-4"
       onPress={() => router.push(`./manager/videoManager?videoId=${item.id}`)}
     >
-      <Image source={{ uri: item.thumbnail }} className="w-full h-48 object-cover" />
-      <View className="p-2">
-        <Text className="text-lg font-semibold text-center">{item.title}</Text>
-        <View className="flex-row items-center justify-center mt-1">
+      <Image source={{ uri: item.thumbnail }} className="w-20 h-20 rounded-lg object-cover" />
+      <View className="ml-4 flex-1">
+        <Text className="text-lg font-semibold">{item.title}</Text>
+        <View className="flex-row items-center mt-1">
           <Icon name="timer" size={16} color="#666" />
           <Text className="ml-1 text-gray-600">{formatDuration(item.duration)}</Text>
         </View>
@@ -41,30 +41,28 @@ const GeneralVideoOverviewScreen = () => {
 
   const renderHackItem = ({ item }) => (
     <TouchableOpacity
-      className="mb-4 bg-white rounded-lg shadow-md p-4"
-      onPress={() => router.push(`./kitchenHackDetailScreen?hackId=${item.id}`)} // Navigate to hack detail
+      className="flex-row items-center bg-white rounded-xl shadow-md p-4 mb-4"
+      onPress={() => router.push(`./kitchenHackDetailScreen?hackId=${item.id}`)}
     >
-      <Text className="text-lg font-semibold text-center">{item.title}</Text>
-      <Text className="mt-2 text-gray-600">{item.content}</Text>
+      <Text className="text-lg font-semibold flex-1">{item.title}</Text>
     </TouchableOpacity>
   );
 
   return (
     <View className="flex-1 p-4 bg-gray-100">
       <BackButton />
-      {/* Tab Selector */}
-      <View className="flex-row justify-around mb-4">
+      <View className="flex-row justify-center space-x-4 mb-4">
         <TouchableOpacity
-          className={`px-4 py-2 rounded-full ${activeTab === "videos" ? "bg-blue-500" : "bg-gray-300"}`}
+          className={`px-6 py-2 rounded-full shadow-md ${activeTab === "videos" ? "bg-green-600" : "bg-gray-300"}`}
           onPress={() => setActiveTab("videos")}
         >
-          <Text className={`text-white ${activeTab === "videos" ? "font-bold" : ""}`}>Videos</Text>
+          <Text className={`text-white ${activeTab === "videos" ? "font-bold" : "font-medium"}`}>Videos</Text>
         </TouchableOpacity>
         <TouchableOpacity
-          className={`px-4 py-2 rounded-full ${activeTab === "hacks" ? "bg-blue-500" : "bg-gray-300"}`}
+          className={`px-6 py-2 rounded-full shadow-md ${activeTab === "hacks" ? "bg-green-600" : "bg-gray-300"}`}
           onPress={() => setActiveTab("hacks")}
         >
-          <Text className={`text-white ${activeTab === "hacks" ? "font-bold" : ""}`}>Kitchen Hacks</Text>
+          <Text className={`text-white ${activeTab === "hacks" ? "font-bold" : "font-medium"}`}>Kitchen Hacks</Text>
         </TouchableOpacity>
       </View>
 

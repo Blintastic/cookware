@@ -1,16 +1,16 @@
 import React, { useContext } from "react";
 import { View, Text, ActivityIndicator, FlatList, TouchableOpacity, Image } from "react-native";
 import { useLocalSearchParams, useRouter } from "expo-router";
-import Icon from "react-native-vector-icons/MaterialIcons"; // Import MaterialIcons for icons
+import Icon from "react-native-vector-icons/MaterialIcons";
 import { DataContext } from "@/lib/DataProvider";
+
 const VideoOverview = () => {
-  const { id } = useLocalSearchParams(); // Recipe ID from route params
+  const { id } = useLocalSearchParams();
   const { recipes, videos, kitchenHacks, loading } = useContext(DataContext);
-  const [activeTab, setActiveTab] = React.useState("videos"); // State to manage active tab
+  const [activeTab, setActiveTab] = React.useState("videos");
   const router = useRouter();
 
   const recipe = recipes.find((recipe) => recipe.$id === id);
-
   const recipeVideos = recipe?.videos || [];
   const recipeKitchenHacks = recipe?.kitchenHacks || [];
 
@@ -25,20 +25,18 @@ const VideoOverview = () => {
   const formatDuration = (durationMillis) => {
     if (!durationMillis) return "00:00";
     const minutes = Math.floor(durationMillis / 60000);
-    const seconds = Math.floor((durationMillis % 60000) / 1000);
-    return `${String(minutes).padStart(2, "0")}:${String(seconds).padStart(2, "0")}`;
+    return `${minutes} min.`;
   };
 
   const renderVideoItem = ({ item }) => (
     <TouchableOpacity
-      className="mb-4 bg-white rounded-lg shadow-md overflow-hidden"
+      className="mb-4 bg-white rounded-2xl shadow-lg overflow-hidden flex-row items-center p-2"
       onPress={() => router.push(`./manager/videoManager?videoId=${item.id}`)}
     >
-      <Image source={{ uri: item.thumbnail }} className="w-full h-48 object-cover" />
-      <View className="p-2">
-        <Text className="text-lg font-semibold text-center">{item.title}</Text>
-        {/* Display duration with an icon */}
-        <View className="flex-row items-center justify-center mt-1">
+      <Image source={{ uri: item.thumbnail }} className="w-24 h-24 rounded-lg" />
+      <View className="flex-1 ml-4">
+        <Text className="text-lg font-semibold text-gray-800">{item.title}</Text>
+        <View className="flex-row items-center mt-1">
           <Icon name="timer" size={16} color="#666" />
           <Text className="ml-1 text-gray-600">{formatDuration(item.duration)}</Text>
         </View>
@@ -46,31 +44,20 @@ const VideoOverview = () => {
     </TouchableOpacity>
   );
 
-  const renderHackItem = ({ item }) => (
-    <TouchableOpacity
-      className="mb-4 bg-white rounded-lg shadow-md p-4"
-      onPress={() => router.push(`./kitchenHackDetailScreen?hackId=${item.id}`)} // Navigate to hack detail
-    >
-      <Text className="text-lg font-semibold text-center">{item.title}</Text>
-      <Text className="mt-2 text-gray-600">{item.content}</Text>
-    </TouchableOpacity>
-  );
-
   return (
     <View className="flex-1 p-4 bg-gray-100">
-      {/* Tab Selector */}
-      <View className="flex-row justify-around mb-4">
+      <View className="flex-row justify-center mb-4">
         <TouchableOpacity
-          className={`px-4 py-2 rounded-full ${activeTab === "videos" ? "bg-blue-500" : "bg-gray-300"}`}
+          className={`px-6 py-2 rounded-full shadow-md ${activeTab === "videos" ? "bg-green-700" : "bg-gray-300"}`}
           onPress={() => setActiveTab("videos")}
         >
-          <Text className={`text-white ${activeTab === "videos" ? "font-bold" : ""}`}>Videos</Text>
+          <Text className={`text-white text-lg ${activeTab === "videos" ? "font-bold" : "font-medium"}`}>Videos</Text>
         </TouchableOpacity>
         <TouchableOpacity
-          className={`px-4 py-2 rounded-full ${activeTab === "hacks" ? "bg-blue-500" : "bg-gray-300"}`}
+          className={`px-6 py-2 rounded-full shadow-md ml-2 ${activeTab === "hacks" ? "bg-gray-500" : "bg-gray-300"}`}
           onPress={() => setActiveTab("hacks")}
         >
-          <Text className={`text-white ${activeTab === "hacks" ? "font-bold" : ""}`}>Kitchen Hacks</Text>
+          <Text className={`text-white text-lg ${activeTab === "hacks" ? "font-bold" : "font-medium"}`}>Kitchen Hacks</Text>
         </TouchableOpacity>
       </View>
 
@@ -87,13 +74,6 @@ const VideoOverview = () => {
         ) : (
           <Text className="text-center text-lg text-gray-600">No videos found</Text>
         )
-      ) : filteredKitchenHacks.length > 0 ? (
-        <FlatList
-          data={filteredKitchenHacks}
-          renderItem={renderHackItem}
-          keyExtractor={(item) => item.id}
-          contentContainerStyle={{ paddingBottom: 16 }}
-        />
       ) : (
         <Text className="text-center text-lg text-gray-600">No kitchen hacks found</Text>
       )}

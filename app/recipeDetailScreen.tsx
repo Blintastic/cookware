@@ -1,6 +1,6 @@
-import { View, Text, ScrollView, ActivityIndicator, TouchableOpacity } from "react-native";
+import { View, Text, ScrollView, ActivityIndicator, TouchableOpacity, Image } from "react-native";
 import React, { useEffect, useState } from "react";
-import AsyncStorage from "@react-native-async-storage/async-storage"; // Import AsyncStorage
+import AsyncStorage from "@react-native-async-storage/async-storage";
 import { databases, appwriteConfig } from "../lib/appwriteConfig";
 import { useRouter, useGlobalSearchParams } from "expo-router";
 import BackButton from "@/components/BackButton";
@@ -21,7 +21,6 @@ export default function RecipeDetail() {
       try {
         if (!id) throw new Error("Recipe ID is missing");
 
-        // Fetch the recipe details from the database
         const response = await databases.getDocument(
           appwriteConfig.databaseId,
           appwriteConfig.recipesCollectionId,
@@ -59,14 +58,11 @@ export default function RecipeDetail() {
     );
   }
 
-  // Function to handle "Kochvorgang starten" button press
   const handleStartCooking = async () => {
     try {
-      // Save the recipe ID to AsyncStorage as the last viewed recipe
       if (id) {
         await AsyncStorage.setItem("lastRecipeId", id);
       }
-      // Navigate to the cooking information screen
       router.push(`/cookingInformationScreen?id=${id}`);
     } catch (error) {
       console.error("Error saving last recipe ID: ", error);
@@ -74,35 +70,30 @@ export default function RecipeDetail() {
   };
 
   return (
-    <ScrollView className="flex-1 bg-white">
-      <View className="flex-row justify-between items-center px-4 py-3 border-b border-gray-300">
-        <BackButton />
-        <Text className="text-base font-medium text-gray-600">{recipe.title}</Text>
+    <ScrollView className="flex-1 bg-white p-4">
+      <BackButton />
+      <Image source={{ uri: recipe.image }} className="w-full h-56 rounded-xl shadow-lg mb-4" />
+      <View className="flex-row items-center justify-between mb-4">
+        <Text className="text-gray-800 text-lg font-semibold">⏱️ {recipe.prep_time} min</Text>
+        <View className="flex-row items-center">
+          <Text className="text-gray-600 text-lg">🔥</Text>
+          <Text className="ml-1 text-gray-600 text-lg">{recipe.difficulty}</Text>
+        </View>
       </View>
-
-      <View className="p-4">
-        <Text className="text-2xl font-bold text-gray-800 mb-4">{recipe.title}</Text>
-        <Text className="text-gray-600 mb-4">{recipe.description}</Text>
-        <Text className="text-gray-800 mb-2">⏱️ Vorbereitung: {recipe.prep_time} min</Text>
-        <Text className="text-gray-800 mb-2">🍳 Kochen: {recipe.cook_time} min</Text>
-        <Text className="text-gray-800 mb-2">🍴 Portionen: {recipe.servings}</Text>
-        <Text className="text-gray-800 font-bold mt-4">👨‍🍳 Anleitung:</Text>
-        <Text className="text-gray-600">{recipe.making}</Text>
-      </View>
-
-      <View className='flex-row items-center justify-between ml-4 mr-4 mt-7'>
+      <Text className="text-2xl font-bold text-gray-900 mb-4 text-center">{recipe.title}</Text>
+      <Text className="text-gray-600 mb-6 text-center">{recipe.description}</Text>
+      <View className="flex-row justify-center space-x-4">
         <CustomButtons
-          title="Zutaten Anzeigen"
+          title="Zutaten"
           handlePress={() => router.push(`/IngredientsListScreen?id=${id}`)}
-          buttonStyle={{ backgroundColor: 'grey', paddingHorizontal: 8 }}
+          buttonStyle={{ backgroundColor: '#1f513f', paddingHorizontal: 16, paddingVertical: 12, borderRadius: 24 }}
           textStyle={{ color: 'white', fontWeight: 'bold' }}
           disabled={false}
         />
-
         <CustomButtons
           title="Kochvorgang starten"
-          handlePress={handleStartCooking} // Use the custom handler
-          buttonStyle={{ backgroundColor: 'grey', paddingHorizontal: 8 }}
+          handlePress={handleStartCooking}
+          buttonStyle={{ backgroundColor: '#1f513f', paddingHorizontal: 16, paddingVertical: 12, borderRadius: 24 }}
           textStyle={{ color: 'white', fontWeight: 'bold' }}
           disabled={false}
         />
