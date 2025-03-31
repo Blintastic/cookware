@@ -73,16 +73,25 @@ export default function Index() {
           {loading ? (
             <ActivityIndicator size="large" color="#0000ff" />
           ) : lastRecipe ? (
-            <View className="w-full bg-gray-200 rounded-2xl p-3 mb-6 items-start">
+            <View className="w-full bg-gray-200 rounded-2xl p-3 mb-6 items-start relative overflow-hidden">
               <Text className="font-lolight text-base text-gray-600">Jetzt weitermachen...</Text>
               <Text className="text-xl font-bold text-left mt-1">{lastRecipe.title}</Text>
+
+              {/* Larger image, positioned lower */}
+              <Image 
+                source={lastRecipe.thumbnail_transparent ? { uri: lastRecipe.thumbnail_transparent } : require("../assets/images/recipeThumbnail.jpg")}
+                className="absolute bottom-[-120px] right-[-45px] w-80 h-80 transform translate-x-16"
+                resizeMode="contain"
+              />
+
               <TouchableOpacity 
-                className="bg-green-900 p-2 px-6 mt-3 shadow-sm rounded-full self-start"
+                className="bg-green-900 p-2 px-6 mt-1 shadow-sm rounded-full self-start"
                 onPress={() => router.push(`/cookingInformationScreen?id=${lastRecipe.$id}`)}
               >
                 <Text className="text-white font-lolight text-lg">Fortsetzen</Text>
               </TouchableOpacity>
             </View>
+
           ) : (
             <Text className="text-gray-600 text-center">Kein Rezept gefunden</Text>
           )}
@@ -103,12 +112,16 @@ export default function Index() {
                 onPress={() => router.push(`/recipeDetailScreen?id=${recipe.$id}`)}
               >
                 <Image
-                  source={{ uri: recipe.image_url }}
+                  source={recipe.thumbnail ? { uri: recipe.thumbnail } : require("../assets/images/recipeThumbnail.jpg")}
                   className="w-full h-56 bg-gray-300"
                   resizeMode="cover"
                 />
+
                 <View className="p-3">
-                  <Text className="text-lg font-semibold">{recipe.title}</Text>
+                <Text className="text-base font-semibold" numberOfLines={1} ellipsizeMode="tail">
+                  {recipe.title}
+                </Text>
+
                   <Text className="text-gray-600">⏱️ {recipe.cook_time} min</Text>
                   <TouchableOpacity 
                     className="bg-green-900 px-3 py-2 rounded-full mt-2"
@@ -137,4 +150,5 @@ export default function Index() {
       </View>
     </TouchableWithoutFeedback>
   );
+
 }

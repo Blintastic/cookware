@@ -3,17 +3,21 @@ import React, { useState, useEffect } from "react";
 import { useRouter, useGlobalSearchParams } from "expo-router";
 import BackButton from "@/components/BackButton";
 import { databases, appwriteConfig } from "../lib/appwriteConfig";
-import { Ionicons } from "@expo/vector-icons";
 import { useShoppingList } from "./manager/ShoppingListContext";
-import Toast from 'react-native-toast-message';
+import BottomBar from "@/components/BottomBar";
+import VideoOverviewButton from "@/components/VideoOverviewButton";
+import CameraButton from "@/components/CameraButton";
+import TimerButton from "@/components/TimerButton";
+import { Ionicons } from "@expo/vector-icons";
+import Toast from "react-native-toast-message";
 
 export default function CookingInformationScreen() {
   const { id } = useGlobalSearchParams();
   const [recipe, setRecipe] = useState(null);
   const [loading, setLoading] = useState(true);
-  const [showIngredients, setShowIngredients] = useState(false);
-  const router = useRouter();
+  const [activeTab, setActiveTab] = useState("information");
   const { addToOpenList } = useShoppingList();
+  const router = useRouter();
 
   useEffect(() => {
     const fetchRecipe = async () => {
@@ -54,51 +58,69 @@ export default function CookingInformationScreen() {
   }
 
   return (
-    <View className="flex-1 bg-white">
-      <ScrollView>
-        {/* Back Button */}
-        <BackButton/>
-        
-        {/* Recipe Image */}
-        <Image 
-          source={require("../assets/images/recipeThumbnail.jpg")}
-          className="rounded-xl object-center mt-4"
-          style={{width: 360, height: 200, alignSelf: "center"}}
-        />
-
-        {/* Recipe Info */}
-        <View className="p-4">
-          <Text className="text-2xl font-bold text-gray-800 mb-2">{recipe.title}</Text>
-          <View className="flex-row items-center mb-4">
-            <Ionicons name="time-outline" size={20} color="black" />
-            <Text className="ml-2">{recipe.cookingTime} min.</Text>
+    <View className="flex-1 bg-white p-4">
+      <ScrollView className="mb-40">
+        <BackButton />
+        <View className="bg-white rounded-xl shadow-lg p-4">
+          <Text className="text-center text-lg font-bold">{recipe.title}</Text>
+          <Image 
+            source={{uri: recipe.thumbnail}}
+            className="rounded-lg my-2"
+            style={{ width: "100%", height: 180 }}
+          />
+          <View className="mt-2">
+            <Text className="text-gray-700 text-sm font-semibold">Kitchen Hack 01: How to…</Text>
+            {activeTab === "information" && (
+              <ScrollView style={{ maxHeight: 200 }}>
+                <Text className="text-gray-600 mt-2">{recipe.description}</Text>
+              </ScrollView>
+            )}
+            {activeTab === "ingredients" && (
+              <ScrollView>
+                <View className="mt-5">
+                  <Text className="text-2xl font-bold text-gray-800 mb-4">Zutaten für {recipe.title}</Text>
+                  {recipe.ingredients?.map((ingredient, index) => (
+                    <View key={index} className="flex-row justify-between items-center mb-2">
+                      <Text className="text-gray-600 text-lg">• {ingredient}</Text>
+                      <TouchableOpacity onPress={() => {
+                        addToOpenList(ingredient, "1 Stk.");
+                        Toast.show({
+                          type: "success",
+                          text1: `${ingredient} wurde zur Einkaufsliste hinzugefügt`,
+                          position: "bottom",
+                          visibilityTime: 2000,
+                          autoHide: true,
+                        });
+                      }}>
+                        <Ionicons name="cart-outline" size={24} color="green" />
+                      </TouchableOpacity>
+                    </View>
+                  ))}
+                </View>
+              </ScrollView>
+            )}
           </View>
-          <View className="flex-row mb-4">
-            {[...Array(5)].map((_, i) => (
-              <Ionicons
-                key={i}
-                name="water-outline"
-                size={20}
-                color={i < recipe.difficulty ? "black" : "gray"}
-              />
-            ))}
-          </View>
-          <Text className="text-gray-600 mb-4">{recipe.description}</Text>
         </View>
-
         {/* Buttons */}
-        <View className="flex-row justify-center p-4">
-          <TouchableOpacity
-            className="px-6 py-3 bg-green-800 rounded-full mr-4"
-            onPress={() => setShowIngredients(true)}
+        <View className="flex-row justify-center mt-4">
+          <TouchableOpacity 
+            className={`px-6 py-2 rounded-full ${activeTab === "information" ? "bg-green-800" : "bg-gray-200"}`}
+            onPress={() => setActiveTab("information")}
           >
-            <Text className="text-white">Zutaten</Text>
+            <Text className={`${activeTab === "information" ? "text-white" : "text-gray-800"}`}>Informationen</Text>
           </TouchableOpacity>
-          <TouchableOpacity className="px-6 py-3 bg-green-800 rounded-full">
-            <Text className="text-white">Kochvorgang starten</Text>
+          <TouchableOpacity 
+            className={`px-6 py-2 ml-2 rounded-full ${activeTab === "ingredients" ? "bg-green-800" : "bg-gray-200"}`}
+            onPress={() => setActiveTab("ingredients")}
+          >
+            <Text className={`${activeTab === "ingredients" ? "text-white" : "text-gray-800"}`}>Zutaten</Text>
           </TouchableOpacity>
         </View>
       </ScrollView>
+      <BottomBar />
+      <CameraButton />
+      <VideoOverviewButton id={Array.isArray(id) ? id[0] : id} />
+      <TimerButton />
     </View>
   );
 }

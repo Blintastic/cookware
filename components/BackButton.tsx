@@ -1,5 +1,5 @@
 import React from "react";
-import { TouchableOpacity, Text } from "react-native";
+import { TouchableOpacity, Image, Text } from "react-native";
 import { useNavigation } from "@react-navigation/native";
 
 interface BackButtonProps {
@@ -9,14 +9,12 @@ interface BackButtonProps {
 
 export default function BackButton({ text, onPress }: BackButtonProps) {
   const navigation = useNavigation();
-  const buttonText = text ?? "← Zurück"; // Default text if none is provided
+  const buttonText = text ?? "Zurück"; // Default text if none is provided
 
   const handlePress = () => {
     if (onPress) {
-      // Use the custom onPress handler if provided
       onPress();
     } else {
-      // Default behavior: Go back if possible
       if (navigation.canGoBack()) {
         navigation.goBack();
       }
@@ -25,10 +23,18 @@ export default function BackButton({ text, onPress }: BackButtonProps) {
 
   return (
     <TouchableOpacity
-      onPress={handlePress} // Use the combined onPress logic
-      className="flex-row items-center"
+      onPress={handlePress} 
+      className="flex-row items-center mb-3"
     >
-      <Text className="text-lg font-semibold text-black">{buttonText}</Text>
+      <Image 
+        source={require("../assets/ui/backButton.png")} 
+        className="w-6 h-6 mr-2" // Größe des Icons anpassen
+        resizeMode="contain"
+      />
+      <Text className="text-2xl font-semibold text-black font-lomedium">
+        {text !== null ? buttonText : ""}
+      </Text>
     </TouchableOpacity>
+
   );
 }

@@ -1,11 +1,10 @@
-import { Text, View, TouchableOpacity } from 'react-native';
+import { Text, View, TouchableOpacity, Image } from 'react-native';
 import React, { useEffect, useState, useRef } from 'react';
 import { Video } from 'expo-av';
 import { useLocalSearchParams } from 'expo-router';
 import { databases, appwriteConfig } from '../../lib/appwriteConfig';
 import { SafeAreaView } from 'react-native';
 import BackButton from '@/components/BackButton';
-import { Ionicons } from '@expo/vector-icons';
 
 const VideoManager = () => {
   const { videoId } = useLocalSearchParams();
@@ -70,26 +69,25 @@ const VideoManager = () => {
         </View>
       ) : videoSource ? (
         <View className="flex-1 justify-center items-center">
-          <View className="mt-10 w-11/12 aspect-[9/16] border-2 border-black rounded-2xl overflow-hidden">
+          <View className="mt-10 w-10/12 aspect-[9/16] overflow-hidden relative">
             <Video
               ref={videoRef}
               source={{ uri: videoSource }}
-              style={{ width: '100%', height: '100%' }}
+              style={{ width: '100%', height: '100%', borderRadius: 20 }}
               shouldPlay={true}
               useNativeControls={false}
             />
-          </View>
-
-          <View className="flex-row justify-center items-center mt-2 mb-5 space-x-8">
-            <TouchableOpacity onPress={() => skip(-5)}>
-              <Ionicons name="play-back" size={40} color="black" />
-            </TouchableOpacity>
-            <TouchableOpacity onPress={togglePlayback}>
-              <Ionicons name={isPlaying ? "pause" : "play"} size={50} color="black" />
-            </TouchableOpacity>
-            <TouchableOpacity onPress={() => skip(5)}>
-              <Ionicons name="play-forward" size={40} color="black" />
-            </TouchableOpacity>
+            <View className="absolute bottom-5 left-0 right-0 flex-row justify-center items-center space-x-8">
+              <TouchableOpacity onPress={() => skip(-5)}>
+                <Image source={require("../../assets/ui/zurueckSpulenButton.png")} className="w-14 h-14" resizeMode="contain" tintColor="white" />
+              </TouchableOpacity>
+              <TouchableOpacity onPress={togglePlayback}>
+                <Image source={require("../../assets/ui/PlayButton.png")} className="w-24 h-24" resizeMode="contain" tintColor="white" />
+              </TouchableOpacity>
+              <TouchableOpacity onPress={() => skip(5)}>
+                <Image source={require("../../assets/ui/vorSpulenButton.png")} className="w-14 h-14" resizeMode="contain" tintColor="white" />
+              </TouchableOpacity>
+            </View>
           </View>
         </View>
       ) : (

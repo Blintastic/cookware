@@ -1,5 +1,5 @@
 import React, { useContext, useState, useEffect } from "react";
-import { View, Text, ActivityIndicator, FlatList, TouchableOpacity, Image } from "react-native";
+import { View, Text, ActivityIndicator, FlatList, TouchableOpacity, Image, ScrollView } from "react-native";
 import { useRouter } from "expo-router";
 import BackButton from "@/components/BackButton";
 import Icon from "react-native-vector-icons/MaterialIcons";
@@ -23,31 +23,6 @@ const GeneralVideoOverviewScreen = () => {
     return `${String(minutes).padStart(2, "0")}:${String(seconds).padStart(2, "0")}`;
   };
 
-  const renderVideoItem = ({ item }) => (
-    <TouchableOpacity
-      className="flex-row items-center bg-white rounded-xl shadow-md p-4 mb-4"
-      onPress={() => router.push(`./manager/videoManager?videoId=${item.id}`)}
-    >
-      <Image source={{ uri: item.thumbnail }} className="w-20 h-20 rounded-lg object-cover" />
-      <View className="ml-4 flex-1">
-        <Text className="text-lg font-semibold">{item.title}</Text>
-        <View className="flex-row items-center mt-1">
-          <Icon name="timer" size={16} color="#666" />
-          <Text className="ml-1 text-gray-600">{formatDuration(item.duration)}</Text>
-        </View>
-      </View>
-    </TouchableOpacity>
-  );
-
-  const renderHackItem = ({ item }) => (
-    <TouchableOpacity
-      className="flex-row items-center bg-white rounded-xl shadow-md p-4 mb-4"
-      onPress={() => router.push(`./kitchenHackDetailScreen?hackId=${item.id}`)}
-    >
-      <Text className="text-lg font-semibold flex-1">{item.title}</Text>
-    </TouchableOpacity>
-  );
-
   return (
     <View className="flex-1 p-4 bg-gray-100">
       <BackButton />
@@ -70,19 +45,40 @@ const GeneralVideoOverviewScreen = () => {
         <ActivityIndicator size="large" color="#0000ff" />
       ) : activeTab === "videos" ? (
         videos.length > 0 ? (
-          <FlatList
-            data={videos}
-            renderItem={renderVideoItem}
-            keyExtractor={(item) => item.id}
-            contentContainerStyle={{ paddingBottom: 16 }}
-          />
+          <ScrollView contentContainerStyle={{ paddingBottom: 16 }}>
+            <View className="flex-row flex-wrap justify-between">
+              {videos.map((item) => (
+                <TouchableOpacity
+                  key={item.id}
+                  className="w-[48%] mb-4 relative"
+                  onPress={() => router.push(`./manager/videoManager?videoId=${item.id}`)}
+                >
+                  <Image source={{ uri: item.thumbnail }} className="w-full h-64 rounded-lg" resizeMode="cover" />
+                  <View style={{ position: "absolute", bottom: 0, left: 0, width: "100%", backgroundColor: "rgba(0,0,0,0.3)", padding: 8, borderBottomLeftRadius: 8, borderBottomRightRadius: 8 }}>
+                  <Text className="text-white font-semibold text-base">{item.title}</Text>
+                    <View className="flex-row items-center mt-1">
+                      <Icon name="timer" size={16} color="#fff" />
+                      <Text className="ml-1 text-white">{formatDuration(item.duration)}</Text>
+                    </View>
+                  </View>
+                </TouchableOpacity>
+              ))}
+            </View>
+          </ScrollView>
         ) : (
           <Text className="text-center text-lg text-gray-600">No videos found</Text>
         )
       ) : kitchenHacks.length > 0 ? (
         <FlatList
           data={kitchenHacks}
-          renderItem={renderHackItem}
+          renderItem={({ item }) => (
+            <TouchableOpacity
+              className="flex-row items-center bg-white rounded-xl shadow-md p-4 mb-4"
+              onPress={() => router.push(`./kitchenHackDetailScreen?hackId=${item.id}`)}
+            >
+              <Text className="text-lg font-semibold flex-1">{item.title}</Text>
+            </TouchableOpacity>
+          )}
           keyExtractor={(item) => item.id}
           contentContainerStyle={{ paddingBottom: 16 }}
         />

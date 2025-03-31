@@ -22,7 +22,7 @@ const SearchBar = () => {
         placeholderTextColor="gray"
         returnKeyType="search" // Changes the keyboard action button to "Search"
         onSubmitEditing={handleSearchSubmit} // Trigger navigation on Enter/Submit
-        className="flex-1 text-gray-300 text-lg font-lolight mb-1"
+        className="flex-1 text-black text-xl font-lolight mb-1"
       />
       <TouchableOpacity onPress={handleSearchSubmit}>
         <Image

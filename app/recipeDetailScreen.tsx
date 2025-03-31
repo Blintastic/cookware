@@ -72,31 +72,35 @@ export default function RecipeDetail() {
   return (
     <ScrollView className="flex-1 bg-white p-4">
       <BackButton />
-      <Image source={{ uri: recipe.image }} className="w-full h-56 rounded-xl shadow-lg mb-4" />
+
+      <Image 
+        source={{uri: recipe.thumbnail}}
+        className="rounded-xl object-center mt-4"
+        style={{width: 360, height: 200, alignSelf: "center"}}
+      />
+
       <View className="flex-row items-center justify-between mb-4">
         <Text className="text-gray-800 text-lg font-semibold">⏱️ {recipe.prep_time} min</Text>
-        <View className="flex-row items-center">
-          <Text className="text-gray-600 text-lg">🔥</Text>
-          <Text className="ml-1 text-gray-600 text-lg">{recipe.difficulty}</Text>
-        </View>
       </View>
-      <Text className="text-2xl font-bold text-gray-900 mb-4 text-center">{recipe.title}</Text>
-      <Text className="text-gray-600 mb-6 text-center">{recipe.description}</Text>
-      <View className="flex-row justify-center space-x-4">
-        <CustomButtons
-          title="Zutaten"
-          handlePress={() => router.push(`/IngredientsListScreen?id=${id}`)}
-          buttonStyle={{ backgroundColor: '#1f513f', paddingHorizontal: 16, paddingVertical: 12, borderRadius: 24 }}
-          textStyle={{ color: 'white', fontWeight: 'bold' }}
-          disabled={false}
-        />
-        <CustomButtons
-          title="Kochvorgang starten"
-          handlePress={handleStartCooking}
-          buttonStyle={{ backgroundColor: '#1f513f', paddingHorizontal: 16, paddingVertical: 12, borderRadius: 24 }}
-          textStyle={{ color: 'white', fontWeight: 'bold' }}
-          disabled={false}
-        />
+      <Text className="text-2xl font-bold text-gray-800 mb-2">{recipe.title}</Text>
+      <Text className="text-gray-600 mb-4">{recipe.description}</Text>
+
+      <View className="flex-row justify-center p-4">
+        <TouchableOpacity
+          className="px-6 py-3 bg-green-800 rounded-full mr-4"
+          onPress={() => router.push(`/IngredientsListScreen?id=${id}`)}
+        >
+          <Text className="text-white">
+            Zutaten
+          </Text>
+        </TouchableOpacity>
+
+        <TouchableOpacity 
+          className="px-6 py-3 bg-green-800 rounded-full"
+          onPress={handleStartCooking}
+        >
+          <Text className="text-white">Kochvorgang starten</Text>
+        </TouchableOpacity>
       </View>
     </ScrollView>
   );

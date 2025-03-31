@@ -15,8 +15,8 @@ const HomescreenBar = () => {
       <View className="flex-row items-center justify-between px-4 py-2 relative">
         <View className="absolute top-0 ml-6">
           <Image
-            source={require("../assets/ui/logo.png")}
-            style={{ width: 50, height: 44 }}          
+            source={require("../assets/images/bildlogo_app.png")}
+            style={{ width: 50, height: 50 }}          
           />
         </View>
 
