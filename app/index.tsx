@@ -79,7 +79,7 @@ export default function Index() {
 
               {/* Larger image, positioned lower */}
               <Image 
-                source={lastRecipe.thumbnail_transparent ? { uri: lastRecipe.thumbnail_transparent } : require("../assets/images/recipeThumbnail.jpg")}
+                source={{ uri: lastRecipe.thumbnail_transparent }}
                 className="absolute bottom-[-120px] right-[-45px] w-80 h-80 transform translate-x-16"
                 resizeMode="contain"
               />
@@ -112,7 +112,7 @@ export default function Index() {
                 onPress={() => router.push(`/recipeDetailScreen?id=${recipe.$id}`)}
               >
                 <Image
-                  source={recipe.thumbnail ? { uri: recipe.thumbnail } : require("../assets/images/recipeThumbnail.jpg")}
+                  source={{ uri: recipe.thumbnail }}
                   className="w-full h-56 bg-gray-300"
                   resizeMode="cover"
                 />
