@@ -77,10 +77,9 @@ export default function Index() {
               <Text className="font-lolight text-base text-gray-600">Jetzt weitermachen...</Text>
               <Text className="text-xl font-bold text-left mt-1">{lastRecipe.title}</Text>
 
-              {/* Larger image, positioned lower */}
               <Image 
                 source={{ uri: lastRecipe.thumbnail_transparent }}
-                className="absolute bottom-[-120px] right-[-45px] w-80 h-80 transform translate-x-16"
+                className="absolute bottom-[-40px] right-[-20px] w-40 h-40 transform"
                 resizeMode="contain"
               />
 

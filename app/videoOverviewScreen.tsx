@@ -51,13 +51,13 @@ const VideoOverview = () => {
       <BackButton />
       <View className="flex-row justify-center space-x-4 mb-4">
         <TouchableOpacity
-          className={`px-6 py-2 rounded-full shadow-md ${activeTab === "videos" ? "bg-green-600" : "bg-gray-300"}`}
+          className={`px-6 py-2 rounded-full shadow-md ${activeTab === "videos" ? "bg-green-800" : "bg-gray-300"}`}
           onPress={() => setActiveTab("videos")}
         >
           <Text className={`text-white ${activeTab === "videos" ? "font-bold" : "font-medium"}`}>Videos</Text>
         </TouchableOpacity>
         <TouchableOpacity
-          className={`px-6 py-2 rounded-full shadow-md ${activeTab === "hacks" ? "bg-green-600" : "bg-gray-300"}`}
+          className={`px-6 py-2 rounded-full shadow-md ${activeTab === "hacks" ? "bg-green-800" : "bg-gray-300"}`}
           onPress={() => setActiveTab("hacks")}
         >
           <Text className={`text-white ${activeTab === "hacks" ? "font-bold" : "font-medium"}`}>Kitchen Hacks</Text>

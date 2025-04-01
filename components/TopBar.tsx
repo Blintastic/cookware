@@ -1,7 +1,8 @@
 import React, { useState } from 'react';
 import { View, SafeAreaView, TouchableOpacity, Image, Text } from 'react-native';
 import SearchBar from './SearchBar';
-import HamburgerMenu from './HamburgerMenu'; // Import the HamburgerMenu
+import HamburgerMenu from './HamburgerMenu'; 
+import { router } from 'expo-router';
 
 const HomescreenBar = () => {
   const [isMenuOpen, setMenuOpen] = useState(false);
@@ -14,16 +15,15 @@ const HomescreenBar = () => {
     <SafeAreaView className="bg-white">
       <View className="flex-row items-center justify-between px-4 py-2 relative">
         <View className="absolute top-0 ml-6">
-          <Image
-            source={require("../assets/images/bildlogo_app.png")}
-            style={{ width: 50, height: 50 }}          
-          />
+          <TouchableOpacity
+            onPress={() => router.push(`/`)}
+          >
+            <Image
+              source={require("../assets/images/bildlogo_app.png")}
+              style={{ width: 50, height: 50 }}          
+            />
+          </TouchableOpacity>
         </View>
-
-        {/* Centered HOME text PLACEHOLDER*/}
-        <Text className="font-lobold text-xl absolute top-2 left-1/2 -translate-x-1/2">
-          HOME
-        </Text>
 
         <SearchBar />
 

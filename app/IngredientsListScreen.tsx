@@ -1,9 +1,8 @@
 import React, { useEffect, useState } from "react";
-import { View, Text, ScrollView, ActivityIndicator, TouchableOpacity } from "react-native";
+import { View, Text, ScrollView, ActivityIndicator, TouchableOpacity, Image} from "react-native";
 import { databases, appwriteConfig } from "../lib/appwriteConfig";
 import { useGlobalSearchParams } from "expo-router";
 import BackButton from "@/components/BackButton";
-import { Ionicons } from "@expo/vector-icons";
 import { useShoppingList } from "./manager/ShoppingListContext";
 import Toast from 'react-native-toast-message';
 
@@ -70,13 +69,18 @@ export default function IngredientsListScreen() {
       <View className="mt-5">
         <Text className="text-2xl font-bold text-gray-800 mb-4">Zutaten für {recipe.title}</Text>
         {recipe.ingredients.map((ingredient: string, index: number) => (
-          <View key={index} className="flex-row justify-between items-center mb-2">
-            <Text className="text-gray-600 text-lg">• {ingredient}</Text>
+          <View key={index} className="flex-row items-center justify-between bg-white p-4 mb-2 rounded-2xl shadow-md"> 
+            <Text className="text-lg font-bold text-gray-800 flex-1" numberOfLines={1} ellipsizeMode="tail">{ingredient.toUpperCase()}</Text>
+            <Text className="text-gray-500 mr-4">1 Stk.</Text>
             <TouchableOpacity
               onPress={() => handleAddToShoppingList(ingredient)}
-              className="ml-4"
+              className="bg-green-800 p-2 rounded-xl ml-4"
             >
-              <Ionicons name="cart-outline" size={24} color="green" />
+              <Image 
+                source={require("../assets/ui/ShoppingCartIcon.png")}
+                className="h-7 w-7 left-[-2px]"
+              />
+
             </TouchableOpacity>
           </View>
         ))}

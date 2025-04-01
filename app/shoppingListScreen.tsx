@@ -16,10 +16,10 @@ export default function ShoppingListScreen() {
       <Text className="text-lg font-lolight uppercase text-gray-800">{item.name}</Text>
       <Text className="text-lg font-lolight text-gray-600">{item.quantity}</Text>
       <TouchableOpacity
-        className="w-10 h-10 bg-green-600 rounded-full flex items-center justify-center"
+        className="w-10 h-10 bg-green-800 rounded-full flex items-center justify-center"
         onPress={() => (tab === "open" ? moveToAcquiredList(item.id) : moveToOpenList(item.id))}
       >
-        <Ionicons name="add" size={24} color="white" />
+        <Ionicons name={tab === "open" ? "checkmark" : "remove"} size={24} color="white" />
       </TouchableOpacity>
     </View>
   );

@@ -68,6 +68,21 @@ export default function CookingInformationScreen() {
             className="rounded-lg my-2"
             style={{ width: "100%", height: 180 }}
           />
+          {/* Tabs moved above the content and properly aligned */}
+          <View className="flex-row justify-between mt-6 px-4">
+            <TouchableOpacity 
+              className={`px-6 py-4 rounded-full ${activeTab === "information" ? "bg-green-800" : "bg-gray-200"}`}
+              onPress={() => setActiveTab("information")}
+            >
+              <Text className={`${activeTab === "information" ? "text-white" : "text-gray-800"}`}>Informationen</Text>
+            </TouchableOpacity>
+            <TouchableOpacity 
+              className={`px-6 py-4 rounded-full ${activeTab === "ingredients" ? "bg-green-800" : "bg-gray-200"}`}
+              onPress={() => setActiveTab("ingredients")}
+            >
+              <Text className={`${activeTab === "ingredients" ? "text-white" : "text-gray-800"}`}>Zutaten</Text>
+            </TouchableOpacity>
+          </View>
           <View className="mt-2">
             <Text className="text-gray-700 text-sm font-semibold">Kitchen Hack 01: How to…</Text>
             {activeTab === "information" && (
@@ -80,8 +95,9 @@ export default function CookingInformationScreen() {
                 <View className="mt-5">
                   <Text className="text-2xl font-bold text-gray-800 mb-4">Zutaten für {recipe.title}</Text>
                   {recipe.ingredients?.map((ingredient, index) => (
-                    <View key={index} className="flex-row justify-between items-center mb-2">
-                      <Text className="text-gray-600 text-lg">• {ingredient}</Text>
+                    <View key={index} className="flex-row items-center justify-between bg-white p-4 mb-2 rounded-2xl shadow-md">
+                      <Text className="text-lg font-bold text-gray-800 flex-1" numberOfLines={1} ellipsizeMode="tail">{ingredient.toUpperCase()}</Text>
+                      <Text className="text-gray-500 mr-4">1 Stk.</Text>
                       <TouchableOpacity onPress={() => {
                         addToOpenList(ingredient, "1 Stk.");
                         Toast.show({
@@ -91,8 +107,11 @@ export default function CookingInformationScreen() {
                           visibilityTime: 2000,
                           autoHide: true,
                         });
-                      }}>
-                        <Ionicons name="cart-outline" size={24} color="green" />
+                      }} className="bg-green-800 p-2 rounded-lg">
+                        <Image 
+                          source={require("../assets/ui/ShoppingCartIcon.png")}
+                          className="h-7 w-7 left-[-2px]"
+                        />
                       </TouchableOpacity>
                     </View>
                   ))}
@@ -100,21 +119,6 @@ export default function CookingInformationScreen() {
               </ScrollView>
             )}
           </View>
-        </View>
-        {/* Buttons */}
-        <View className="flex-row justify-center mt-4">
-          <TouchableOpacity 
-            className={`px-6 py-2 rounded-full ${activeTab === "information" ? "bg-green-800" : "bg-gray-200"}`}
-            onPress={() => setActiveTab("information")}
-          >
-            <Text className={`${activeTab === "information" ? "text-white" : "text-gray-800"}`}>Informationen</Text>
-          </TouchableOpacity>
-          <TouchableOpacity 
-            className={`px-6 py-2 ml-2 rounded-full ${activeTab === "ingredients" ? "bg-green-800" : "bg-gray-200"}`}
-            onPress={() => setActiveTab("ingredients")}
-          >
-            <Text className={`${activeTab === "ingredients" ? "text-white" : "text-gray-800"}`}>Zutaten</Text>
-          </TouchableOpacity>
         </View>
       </ScrollView>
       <BottomBar />
